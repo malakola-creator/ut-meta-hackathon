@@ -1,0 +1,60 @@
+[
+ {
+  "name": "house_day",
+  "start_s": 0,
+  "seconds": 40,
+  "camera": {
+   "kind": "orbit",
+   "centre": [
+    0.0,
+    0.0,
+    0.8
+   ],
+   "radius": 15.0,
+   "height": 9.0,
+   "deg": [
+    235,
+    305
+   ]
+  },
+  "lens": 24,
+  "thoughts": false
+ },
+ {
+  "name": "house_dusk",
+  "start_s": 20,
+  "seconds": 23,
+  "hour": 18.9,
+  "camera": {
+   "kind": "orbit",
+   "centre": [
+    0.0,
+    0.0,
+    0.8
+   ],
+   "radius": 15.0,
+   "height": 8.0,
+   "deg": [
+    305,
+    340
+   ]
+  },
+  "lens": 24,
+  "thoughts": false
+ },
+ {
+  "name": "cat_follow",
+  "start_s": 2,
+  "seconds": 20,
+  "camera": {
+   "kind": "follow",
+   "agent": "vcat",
+   "back": 2.2,
+   "up": 1.0,
+   "aim_z": 0.3,
+   "min_back": 0.9
+  },
+  "lens": 30,
+  "thoughts": false
+ }
+]

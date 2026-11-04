@@ -1,0 +1,18 @@
+{
+ "phrase": "a cat",
+ "box": [
+  699,
+  446,
+  1198,
+  844
+ ],
+ "pixels": 39013,
+ "found": {
+  "a cat": 1,
+  "a dog": 0,
+  "a robot vacuum": 0,
+  "a bowl": 0
+ },
+ "seconds": 4.5,
+ "picture": "ut-meta-video/build/cat/cat_frame_b.png (a frame of the Blender follow shot, 12 s)"
+}

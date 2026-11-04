@@ -1,0 +1,37 @@
+{
+ "model": "meta:muse-spark-1.3",
+ "size": "thumb",
+ "score": {
+  "A": 0,
+  "B": 1,
+  "C": 1
+ },
+ "n": 1,
+ "rows": [
+  {
+   "file": "shelf_4.png",
+   "truth": "a bookshelf",
+   "A": {
+    "name_en": "rock",
+    "name_th": "หิน",
+    "hit": false,
+    "gate": true,
+    "s": 18.0
+   },
+   "B": {
+    "name_en": "bookshelf",
+    "name_th": "ชั้นหนังสือ",
+    "hit": true,
+    "gate": true,
+    "s": 7.6
+   },
+   "C": {
+    "name_en": "bookshelf",
+    "name_th": "ชั้นหนังสือ",
+    "hit": true,
+    "gate": true,
+    "s": 13.8
+   }
+  }
+ ]
+}

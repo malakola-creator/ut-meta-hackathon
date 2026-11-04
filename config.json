@@ -1,0 +1,48 @@
+{
+  "core": {
+    "_note": "ultimateTruth stays in its own repo; this one only talks to it (HTTP) or imports it for local tools",
+    "path": "../ultimateTruth",
+    "url": "http://127.0.0.1:5000",
+    "token_env": "UT_TOKEN"
+  },
+  "llm": {
+    "backend": "ollama",
+    "temperature": 0.2,
+    "timeout_s": 300,
+    "ollama": {
+      "url": "http://127.0.0.1:11434",
+      "model": "llama3.2:3b"
+    },
+    "glimmer": {
+      "_note": "Muse Glimmer 30B Q5 on a llama.cpp server (ours: the AGX Orin, its address in config.local.json); lora_scale 0 = the base model for these requests",
+      "url": "http://<your-llama-server>:8095",
+      "model": "muse-glimmer-30b-q5",
+      "max_tokens": 600,
+      "reasoning_strength": "none",
+      "lora_scale": 0.0
+    },
+    "openai": {
+      "_note": "Meta Model API (OpenAI-compatible, dev.meta.ai/docs/quickstart): muse-spark-1.3; sam-3.1 and muse-image-1.0 are on the same API",
+      "url": "https://api.meta.ai/v1",
+      "model": "muse-spark-1.3",
+      "key_env": "MODEL_API_KEY"
+    }
+  },
+  "eye": {
+    "model": "facebook/sam2.1-hiera-tiny",
+    "_note": "sam-3.1 is on the Meta Model API (text prompt → boxes + masks; cookbook 07_sam, meta_sam_parser); facebook/sam2.1-hiera-tiny runs locally",
+    "width": 320,
+    "height": 240,
+    "half_fov_deg": 35.0
+  },
+  "namer": {
+    "max_name_chars": 40
+  },
+  "composer": {
+    "min_steps": 2,
+    "max_steps": 4,
+    "p1_max": 65535,
+    "exit_value_max": 65535
+  },
+  "proposals": "data/proposals.jsonl"
+}

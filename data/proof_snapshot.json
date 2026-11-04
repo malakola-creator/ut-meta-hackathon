@@ -1,0 +1,1260 @@
+{
+ "agents": {
+  "vhum": {
+   "kinds": [
+    {
+     "key": "kind|neutral|moves=0|food=0|read=0",
+     "label_th": "สิ่งที่อยู่กับที่ ชนแล้วกระทบกาย (ทุกขเวทนาทางกาย) ไม่ใช่อาหาร",
+     "label_en": "a thing that stays put, bumping into it hurts the body (painful bodily feeling), not food",
+     "given": {
+      "th": null,
+      "en": null,
+      "from": null
+     },
+     "asking": [
+      {
+       "what": "name",
+       "th": "เรียกว่าอะไร",
+       "en": "what is it called",
+       "status": "answered",
+       "by": "book:things",
+       "answer_th": "สิ่งของที่อยู่กับที่ (เฟอร์นิเจอร์ ต้นไม้ ชั้นหนังสือ)",
+       "answer_en": "a thing that stays put (furniture, a tree, a bookshelf)"
+      },
+      {
+       "what": "touched",
+       "th": "ชนแล้วเป็นอย่างไร",
+       "en": "what is bumping into it like",
+       "status": "answered",
+       "by": "experience",
+       "answer_th": "ชนแล้วกระทบกาย",
+       "answer_en": "bumping into it hurts"
+      }
+     ],
+     "met": 153
+    },
+    {
+     "key": "kind|neutral|moves=1|food=0|read=0",
+     "label_th": "สิ่งที่เคลื่อนที่เอง เข้ามาใกล้ ชนแล้วกระทบกาย (ทุกขเวทนาทางกาย) ไม่ใช่อาหาร",
+     "label_en": "a thing that moves by itself, comes closer, bumping into it hurts the body (painful bodily feeling), not food",
+     "given": {
+      "th": null,
+      "en": null,
+      "from": null
+     },
+     "asking": [
+      {
+       "what": "name",
+       "th": "เรียกว่าอะไร",
+       "en": "what is it called",
+       "status": "answered",
+       "by": "book:things",
+       "answer_th": "สิ่งมีชีวิต (คนหรือหุ่นที่เดินได้)",
+       "answer_en": "a being (a person or a walking body)"
+      },
+      {
+       "what": "touched",
+       "th": "ชนแล้วเป็นอย่างไร",
+       "en": "what is bumping into it like",
+       "status": "answered",
+       "by": "exchange:vcat",
+       "answer_th": "ใช่",
+       "answer_en": "yes"
+      },
+      {
+       "what": "came_closer",
+       "th": "มันเข้ามาหาเราไหม",
+       "en": "does it come toward the body",
+       "status": "answered",
+       "by": "experience",
+       "answer_th": "ใช่ เข้ามาใกล้",
+       "answer_en": "yes, it comes closer"
+      }
+     ],
+     "met": 350
+    },
+    {
+     "key": "kind|neutral|moves=0|food=0|read=1",
+     "label_th": "สิ่งที่อยู่กับที่ ชนแล้วกระทบกาย (ทุกขเวทนาทางกาย) อ่านได้ (มีหนังสือ) ไม่ใช่อาหาร",
+     "label_en": "a thing that stays put, bumping into it hurts the body (painful bodily feeling), can be read (books on it), not food",
+     "given": {
+      "th": null,
+      "en": null,
+      "from": null
+     },
+     "asking": [
+      {
+       "what": "touched",
+       "th": "ชนแล้วเป็นอย่างไร",
+       "en": "what is bumping into it like",
+       "status": "answered",
+       "by": "experience",
+       "answer_th": "ชนแล้วกระทบกาย",
+       "answer_en": "bumping into it hurts"
+      }
+     ],
+     "met": 26
+    },
+    {
+     "key": "kind|neutral|moves=1|food=0|read=1",
+     "label_th": "สิ่งที่เคลื่อนที่เอง ชนแล้วกระทบกาย (ทุกขเวทนาทางกาย) อ่านได้ (มีหนังสือ) ไม่ใช่อาหาร",
+     "label_en": "a thing that moves by itself, bumping into it hurts the body (painful bodily feeling), can be read (books on it), not food",
+     "given": {
+      "th": null,
+      "en": null,
+      "from": null
+     },
+     "asking": [
+      {
+       "what": "name",
+       "th": "เรียกว่าอะไร",
+       "en": "what is it called",
+       "status": "answered",
+       "by": "book:things",
+       "answer_th": "เครื่องจักร (หุ่นทำความสะอาด)",
+       "answer_en": "a machine (the cleaning robot)"
+      },
+      {
+       "what": "touched",
+       "th": "ชนแล้วเป็นอย่างไร",
+       "en": "what is bumping into it like",
+       "status": "answered",
+       "by": "experience",
+       "answer_th": "ชนแล้วกระทบกาย",
+       "answer_en": "bumping into it hurts"
+      },
+      {
+       "what": "came_closer",
+       "th": "มันเข้ามาหาเราไหม",
+       "en": "does it come toward the body",
+       "status": "open",
+       "by": "",
+       "answer_th": "",
+       "answer_en": ""
+      }
+     ],
+     "met": 6
+    }
+   ],
+   "proposals": [
+    {
+     "key": "proposed:1",
+     "problem": "unstuck",
+     "th": "ทางออกที่โมเดลเสนอ",
+     "en": "the way a model proposed",
+     "from": "glimmer:muse-glimmer-30b-q5",
+     "steps": 3,
+     "life": 134,
+     "tries": 0,
+     "answered": 0,
+     "learnt": false
+    }
+   ],
+   "edits": []
+  },
+  "mehum": {
+   "kinds": [
+    {
+     "key": "kind|neutral|moves=1|food=0|read=0",
+     "label_th": "สิ่งมีชีวิต (คนหรือหุ่นที่เดินได้)",
+     "label_en": "a being (a person or a walking body)",
+     "given": {
+      "th": "สิ่งมีชีวิต (คนหรือหุ่นที่เดินได้)",
+      "en": "a being (a person or a walking body)",
+      "from": "exchange:vhum"
+     },
+     "asking": [
+      {
+       "what": "name",
+       "th": "เรียกว่าอะไร",
+       "en": "what is it called",
+       "status": "answered",
+       "by": "exchange:vhum",
+       "answer_th": "สิ่งมีชีวิต (คนหรือหุ่นที่เดินได้)",
+       "answer_en": "a being (a person or a walking body)"
+      },
+      {
+       "what": "touched",
+       "th": "ชนแล้วเป็นอย่างไร",
+       "en": "what is bumping into it like",
+       "status": "answered",
+       "by": "exchange:vcat",
+       "answer_th": "ใช่",
+       "answer_en": "yes"
+      },
+      {
+       "what": "came_closer",
+       "th": "มันเข้ามาหาเราไหม",
+       "en": "does it come toward the body",
+       "status": "answered",
+       "by": "experience",
+       "answer_th": "ใช่ เข้ามาใกล้",
+       "answer_en": "yes, it comes closer"
+      }
+     ],
+     "met": 101
+    },
+    {
+     "key": "kind|neutral|moves=0|food=0|read=0",
+     "label_th": "สิ่งของที่อยู่กับที่ (เฟอร์นิเจอร์ ต้นไม้ ชั้นหนังสือ)",
+     "label_en": "a thing that stays put (furniture, a tree, a bookshelf)",
+     "given": {
+      "th": "สิ่งของที่อยู่กับที่ (เฟอร์นิเจอร์ ต้นไม้ ชั้นหนังสือ)",
+      "en": "a thing that stays put (furniture, a tree, a bookshelf)",
+      "from": "exchange:vhum"
+     },
+     "asking": [
+      {
+       "what": "name",
+       "th": "เรียกว่าอะไร",
+       "en": "what is it called",
+       "status": "answered",
+       "by": "exchange:vhum",
+       "answer_th": "สิ่งของที่อยู่กับที่ (เฟอร์นิเจอร์ ต้นไม้ ชั้นหนังสือ)",
+       "answer_en": "a thing that stays put (furniture, a tree, a bookshelf)"
+      },
+      {
+       "what": "touched",
+       "th": "ชนแล้วเป็นอย่างไร",
+       "en": "what is bumping into it like",
+       "status": "answered",
+       "by": "exchange:vhum",
+       "answer_th": "ใช่",
+       "answer_en": "yes"
+      }
+     ],
+     "met": 180
+    }
+   ],
+   "proposals": [],
+   "edits": []
+  },
+  "vcat": {
+   "kinds": [
+    {
+     "key": "kind|neutral|moves=1|food=0|read=0",
+     "label_th": "สิ่งมีชีวิต (คนหรือหุ่นที่เดินได้)",
+     "label_en": "a being (a person or a walking body)",
+     "given": {
+      "th": "สิ่งมีชีวิต (คนหรือหุ่นที่เดินได้)",
+      "en": "a being (a person or a walking body)",
+      "from": "exchange:vhum"
+     },
+     "asking": [
+      {
+       "what": "name",
+       "th": "เรียกว่าอะไร",
+       "en": "what is it called",
+       "status": "answered",
+       "by": "exchange:vhum",
+       "answer_th": "สิ่งมีชีวิต (คนหรือหุ่นที่เดินได้)",
+       "answer_en": "a being (a person or a walking body)"
+      },
+      {
+       "what": "touched",
+       "th": "ชนแล้วเป็นอย่างไร",
+       "en": "what is bumping into it like",
+       "status": "answered",
+       "by": "experience",
+       "answer_th": "ชนแล้วกระทบกาย",
+       "answer_en": "bumping into it hurts"
+      },
+      {
+       "what": "came_closer",
+       "th": "มันเข้ามาหาเราไหม",
+       "en": "does it come toward the body",
+       "status": "answered",
+       "by": "exchange:vhum",
+       "answer_th": "ใช่",
+       "answer_en": "yes"
+      }
+     ],
+     "met": 168
+    },
+    {
+     "key": "kind|neutral|moves=1|food=0|read=1",
+     "label_th": "เครื่องจักร (หุ่นทำความสะอาด)",
+     "label_en": "a machine (the cleaning robot)",
+     "given": {
+      "th": "เครื่องจักร (หุ่นทำความสะอาด)",
+      "en": "a machine (the cleaning robot)",
+      "from": "exchange:vhum"
+     },
+     "asking": [
+      {
+       "what": "name",
+       "th": "เรียกว่าอะไร",
+       "en": "what is it called",
+       "status": "answered",
+       "by": "exchange:vhum",
+       "answer_th": "เครื่องจักร (หุ่นทำความสะอาด)",
+       "answer_en": "a machine (the cleaning robot)"
+      },
+      {
+       "what": "touched",
+       "th": "ชนแล้วเป็นอย่างไร",
+       "en": "what is bumping into it like",
+       "status": "answered",
+       "by": "exchange:vhum",
+       "answer_th": "ใช่",
+       "answer_en": "yes"
+      },
+      {
+       "what": "came_closer",
+       "th": "มันเข้ามาหาเราไหม",
+       "en": "does it come toward the body",
+       "status": "open",
+       "by": "",
+       "answer_th": "",
+       "answer_en": ""
+      }
+     ],
+     "met": 6
+    },
+    {
+     "key": "kind|neutral|moves=0|food=0|read=0",
+     "label_th": "สิ่งของที่อยู่กับที่ (เฟอร์นิเจอร์ ต้นไม้ ชั้นหนังสือ)",
+     "label_en": "a thing that stays put (furniture, a tree, a bookshelf)",
+     "given": {
+      "th": "สิ่งของที่อยู่กับที่ (เฟอร์นิเจอร์ ต้นไม้ ชั้นหนังสือ)",
+      "en": "a thing that stays put (furniture, a tree, a bookshelf)",
+      "from": "exchange:vhum"
+     },
+     "asking": [
+      {
+       "what": "name",
+       "th": "เรียกว่าอะไร",
+       "en": "what is it called",
+       "status": "answered",
+       "by": "exchange:vhum",
+       "answer_th": "สิ่งของที่อยู่กับที่ (เฟอร์นิเจอร์ ต้นไม้ ชั้นหนังสือ)",
+       "answer_en": "a thing that stays put (furniture, a tree, a bookshelf)"
+      },
+      {
+       "what": "touched",
+       "th": "ชนแล้วเป็นอย่างไร",
+       "en": "what is bumping into it like",
+       "status": "answered",
+       "by": "exchange:vhum",
+       "answer_th": "ใช่",
+       "answer_en": "yes"
+      }
+     ],
+     "met": 252
+    }
+   ],
+   "proposals": [],
+   "edits": []
+  }
+ },
+ "log": [
+  {
+   "at": "2026-11-05T02:14:28",
+   "kind": "look_name",
+   "model": "meta:muse-spark-1.3",
+   "seconds": 8.79,
+   "accepted": true,
+   "problems": [],
+   "input": {
+    "cell": "kind|neutral|moves=1|food=0|read=0",
+    "phrase": "a cat",
+    "box": [
+     699,
+     446,
+     1198,
+     844
+    ],
+    "view": "a frame of the Blender follow shot of the cat (cat_follow, 12 s); SAM 3.1 'a cat'",
+    "sam_found": {
+     "a cat": 1,
+     "a dog": 0,
+     "a robot vacuum": 0,
+     "a bowl": 0
+    }
+   },
+   "output": {
+    "name_en": "cat",
+    "name_th": "แมว",
+    "used": [
+     "picture",
+     "moves_by_itself",
+     "size_m",
+     "is_food"
+    ],
+    "why": "Picture shows a white four-legged animal with tail and cat shape, moves by itself, about 0.5m size, not food, matches a cat."
+   }
+  },
+  {
+   "at": "2026-11-05T02:14:19",
+   "kind": "look_name",
+   "model": "glimmer:muse-glimmer-30b-q5",
+   "seconds": 23.8,
+   "accepted": true,
+   "problems": [],
+   "input": {
+    "cell": "kind|neutral|moves=1|food=0|read=0",
+    "phrase": "a cat",
+    "box": [
+     699,
+     446,
+     1198,
+     844
+    ],
+    "view": "a frame of the Blender follow shot of the cat (cat_follow, 12 s); SAM 3.1 'a cat'",
+    "sam_found": {
+     "a cat": 1,
+     "a dog": 0,
+     "a robot vacuum": 0,
+     "a bowl": 0
+    }
+   },
+   "output": {
+    "name_en": "cat",
+    "name_th": "แมว",
+    "used": [
+     "moves_by_itself",
+     "came_closer",
+     "hurt_when_touched",
+     "is_food",
+     "changes_look",
+     "size_m",
+     "times_met",
+     "picture"
+    ],
+    "why": "The picture shows a white animal with dark points on ears, tail and legs, body size about 0.5 m, consistent with a cat. Observations indicate it moves by itself, came closer, is not food, changes look, and hurts when touched, matching a living cat encountered many times."
+   }
+  },
+  {
+   "at": "2026-11-05T00:08:36",
+   "kind": "rehearse",
+   "model": "glimmer:muse-glimmer-30b-q5",
+   "seconds": 19.05,
+   "accepted": true,
+   "problems": [],
+   "input": {
+    "agent": "vhum",
+    "problem": "unstuck",
+    "steps": [
+     "turn_toward",
+     "drive_forward",
+     "turn_clear"
+    ],
+    "key": "proposed:1"
+   },
+   "output": {
+    "done": true,
+    "row": 20,
+    "rank": 3,
+    "ways": 3,
+    "ranked": [
+     {
+      "key": "proc:wander",
+      "score": 1.5038,
+      "moved_m": 0.5,
+      "bumps": 0
+     },
+     {
+      "key": "composed:wander+gentler",
+      "score": 1.1832,
+      "moved_m": 0.18,
+      "bumps": 0
+     },
+     {
+      "key": "proposed:1",
+      "score": 0.0002,
+      "moved_m": 0.0,
+      "bumps": 0
+     }
+    ],
+    "why": null
+   }
+  },
+  {
+   "at": "2026-11-04T19:48:20",
+   "kind": "look_name",
+   "model": "meta:muse-spark-1.3",
+   "seconds": 20.8,
+   "accepted": true,
+   "problems": [],
+   "input": {
+    "sid": 5,
+    "cell": "kind|neutral|moves=1|food=0|read=0",
+    "phrase": "(SAM 2.1, point)",
+    "box": [
+     149,
+     163,
+     231,
+     235
+    ],
+    "view": "the body's eye: the picture of 28 Oct and its cut-out from the centre point (SAM 2.1; no read word matched), data/look/look_5_cut.png, named again by this model on 4 Nov"
+   },
+   "output": {
+    "name_en": "robot vacuum",
+    "name_th": "หุ่นยนต์ดูดฝุ่น",
+    "used": [
+     "moves_by_itself",
+     "size_m",
+     "is_food",
+     "picture"
+    ],
+    "why": "round flat gray machine about 0.5m with indicator light in picture that moves by itself and is not food, like a home robot vacuum"
+   }
+  },
+  {
+   "at": "2026-10-28T08:28:11",
+   "kind": "look_name",
+   "model": "baseten:meta-models/muse-spark-open-1026",
+   "seconds": 2.81,
+   "accepted": true,
+   "problems": [],
+   "input": {
+    "sid": 5,
+    "cell": "kind|neutral|moves=1|food=0|read=0",
+    "phrase": "(SAM 2.1, point)",
+    "box": [
+     149,
+     163,
+     231,
+     235
+    ],
+    "view": "near the thing (a test, not the body's eye)"
+   },
+   "output": {
+    "name_en": "robot vacuum cleaner",
+    "name_th": "หุ่นยนต์ดูดฝุ่น",
+    "used": [
+     "moves_by_itself",
+     "came_closer",
+     "is_food",
+     "changes_look",
+     "size_m",
+     "times_met",
+     "picture"
+    ],
+    "why": "moves by itself and came closer with small 0.5m size and round flat shape with light in picture matches a robot vacuum; not food and appearance does not change, seen many times (39) as a household appliance."
+   }
+  },
+  {
+   "at": "2026-10-28T08:27:30",
+   "kind": "look_name",
+   "model": "baseten:meta-models/muse-spark-open-1026",
+   "seconds": 3.37,
+   "accepted": true,
+   "problems": [],
+   "input": {
+    "sid": 5,
+    "cell": "kind|neutral|moves=1|food=0|read=0",
+    "phrase": "(SAM 2.1, point)",
+    "box": [
+     152,
+     163,
+     230,
+     232
+    ],
+    "view": "near the thing (a test, not the body's eye)"
+   },
+   "output": {
+    "name_en": "cat",
+    "name_th": "แมว",
+    "used": [
+     "moves_by_itself",
+     "came_closer",
+     "is_food",
+     "changes_look",
+     "size_m",
+     "times_met"
+    ],
+    "why": "moves by itself and came closer so animate animal not object, not food and does not change look so stable animal, 0.5m size matches small animal like cat, met 39 times suggests familiar pet/stray encountered often"
+   }
+  },
+  {
+   "at": "2026-10-28T08:26:27",
+   "kind": "look_name",
+   "model": "baseten:meta-models/muse-spark-open-1026",
+   "seconds": 5.58,
+   "accepted": true,
+   "problems": [],
+   "input": {
+    "sid": 5,
+    "cell": "kind|neutral|moves=1|food=0|read=0",
+    "phrase": null,
+    "box": null,
+    "view": "near the thing (a test, not the body's eye)"
+   },
+   "output": {
+    "name_en": "dog",
+    "name_th": "หมา",
+    "used": [
+     "moves_by_itself",
+     "came_closer",
+     "is_food",
+     "changes_look",
+     "size_m",
+     "times_met"
+    ],
+    "why": "moves by itself and came closer shows it is animate and approaches the observer; 0.5m size fits a small to medium dog, not food and does not change look rules out inanimate changing objects, and met 39 times suggests a familiar neighborhood pet/stray animal like a dog."
+   }
+  },
+  {
+   "at": "2026-10-28T07:54:39",
+   "kind": "look_name",
+   "model": "baseten:meta-models/muse-spark-open-1026",
+   "seconds": 3.09,
+   "accepted": true,
+   "problems": [],
+   "input": {
+    "sid": 5,
+    "cell": "kind|neutral|moves=1|food=0|read=0",
+    "phrase": null,
+    "box": null
+   },
+   "output": {
+    "name_en": "pet cat",
+    "name_th": "แมวเลี้ยง",
+    "used": [
+     "moves_by_itself",
+     "came_closer",
+     "changes_look",
+     "size_m",
+     "times_met",
+     "is_food"
+    ],
+    "why": "moves by itself and came closer shows it is an animate agent, not food and 0.5m size with frequent meetings (93 times) fits a familiar small pet, and changes_look fits an animal changing posture/expression"
+   }
+  },
+  {
+   "at": "2026-10-26T23:52:43",
+   "kind": "compose",
+   "model": "glimmer:muse-glimmer-30b-q5",
+   "seconds": 46.49,
+   "accepted": true,
+   "problems": [],
+   "input": {
+    "problem": "stuck in a corner",
+    "front_clear_cm": 45,
+    "left_clear_cm": 40,
+    "right_clear_cm": 300,
+    "behind_seen": "unknown"
+   },
+   "output": {
+    "steps": [
+     {
+      "primitive": "turn_toward",
+      "p1": 0,
+      "exit": {
+       "kind": "bearing_below",
+       "value": 0
+      },
+      "why": "The robot is stuck in a corner with limited clearance on the left (40 cm) and front (45 cm), but ample space on the right (300 cm). Turning toward the right will orient the robot toward the open side, allowing it to escape the corner."
+     },
+     {
+      "primitive": "drive_forward",
+      "p1": 0,
+      "exit": {
+       "kind": "dist_below",
+       "value": 300
+      },
+      "why": "After turning toward the right, driving forward will move the robot into the open space on the right, away from the corner, using the available 300 cm clearance."
+     },
+     {
+      "primitive": "turn_clear",
+      "p1": 0,
+      "exit": {
+       "kind": "front_clear",
+       "value": 0
+      },
+      "why": "Once the robot has moved into the open area, turning clear ensures the path ahead is unobstructed, confirming the robot is no longer stuck and can continue navigating safely."
+     }
+    ]
+   }
+  },
+  {
+   "at": "2026-10-26T23:51:56",
+   "kind": "read",
+   "model": "glimmer:muse-glimmer-30b-q5",
+   "seconds": 34.19,
+   "accepted": false,
+   "problems": [
+    "line 0: a word needs desc",
+    "line 2: a word needs desc"
+   ],
+   "input": "Our house. A cat is a small animal that walks by itself and often comes closer to people; it is not food. The kitchen is in the north-east of the house. A ripe fruit smells sweet and gives energy; a rotten fruit is brown and takes energy away.\n",
+   "output": {
+    "lines": [
+     {
+      "kind": "word",
+      "en": "Our house",
+      "th": "บ้านของเรา"
+     },
+     {
+      "kind": "word",
+      "en": "cat",
+      "th": "แมว",
+      "desc": {
+       "moves_self": true,
+       "came_closer": true,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "word",
+      "en": "kitchen",
+      "th": "ห้องครัว"
+     },
+     {
+      "kind": "note",
+      "en": "The kitchen is in the north-east of the house.",
+      "th": "ห้องครัวอยู่ทางตะวันออกเฉียงเหนือของบ้าน"
+     },
+     {
+      "kind": "word",
+      "en": "ripe fruit",
+      "th": "ผลไม้สุก",
+      "desc": {
+       "food": true
+      }
+     },
+     {
+      "kind": "word",
+      "en": "rotten fruit",
+      "th": "ผลไม้เน่า",
+      "desc": {
+       "food": true
+      }
+     }
+    ]
+   }
+  },
+  {
+   "at": "2026-10-26T23:51:22",
+   "kind": "name",
+   "model": "glimmer:muse-glimmer-30b-q5",
+   "seconds": 14.97,
+   "accepted": true,
+   "problems": [],
+   "input": {
+    "moves_by_itself": false,
+    "came_closer": false,
+    "hurt_when_touched": null,
+    "is_food": false,
+    "changes_look": true,
+    "size_m": 0.22,
+    "times_met": 3,
+    "key": "neutral|a3"
+   },
+   "output": {
+    "name_en": "small decorative object",
+    "name_th": "ของตกแต่งชิ้นเล็ก",
+    "used": [
+     "size_m",
+     "changes_look",
+     "is_food",
+     "moves_by_itself"
+    ],
+    "why": "Size ~0.22 m and changes_look suggests a small decorative item; it is not food and does not move by itself, consistent with a static ornament."
+   }
+  },
+  {
+   "at": "2026-10-26T23:51:07",
+   "kind": "name",
+   "model": "glimmer:muse-glimmer-30b-q5",
+   "seconds": 14.76,
+   "accepted": true,
+   "problems": [],
+   "input": {
+    "moves_by_itself": true,
+    "came_closer": false,
+    "hurt_when_touched": null,
+    "is_food": false,
+    "changes_look": true,
+    "size_m": 0.5,
+    "times_met": 39,
+    "key": "neutral|a2"
+   },
+   "output": {
+    "name_en": "pet",
+    "name_th": "สัตว์เลี้ยง",
+    "used": [
+     "moves_by_itself",
+     "size_m",
+     "times_met",
+     "changes_look",
+     "is_food"
+    ],
+    "why": "It moves by itself, is about 0.5 m in size, has been met many times, changes look, and is not food, consistent with a pet."
+   }
+  },
+  {
+   "at": "2026-10-26T23:50:52",
+   "kind": "name",
+   "model": "glimmer:muse-glimmer-30b-q5",
+   "seconds": 14.94,
+   "accepted": true,
+   "problems": [],
+   "input": {
+    "moves_by_itself": false,
+    "came_closer": false,
+    "hurt_when_touched": null,
+    "is_food": false,
+    "changes_look": true,
+    "size_m": 0.3,
+    "times_met": 76,
+    "key": "neutral|a1"
+   },
+   "output": {
+    "name_en": "small decorative object",
+    "name_th": "ของตกแต่งชิ้นเล็ก",
+    "used": [
+     "size_m",
+     "changes_look",
+     "is_food",
+     "moves_by_itself"
+    ],
+    "why": "Size ~0.3 m and changes_look suggests a small decorative item; is_food false and moves_by_itself false rule out living/food items."
+   }
+  },
+  {
+   "at": "2026-10-26T20:01:02",
+   "kind": "compose",
+   "model": "ollama:llama3.2:3b",
+   "seconds": 14.25,
+   "accepted": false,
+   "problems": [
+    "step 1: p1 None is not an integer 0..65535"
+   ],
+   "input": {
+    "problem": "stuck in a corner",
+    "front_clear_cm": 45,
+    "left_clear_cm": 40,
+    "right_clear_cm": 300,
+    "behind_seen": "unknown"
+   },
+   "output": {
+    "steps": [
+     {
+      "primitive": "turn_away",
+      "p1": 90,
+      "exit": {
+       "kind": "bearing_below",
+       "value": 45
+      },
+      "why": "to assess the left side of the corner"
+     },
+     {
+      "primitive": "scan",
+      "p1": null,
+      "exit": {
+       "kind": "visible",
+       "value": 0
+      },
+      "why": "to check for obstacles on the left"
+     },
+     {
+      "primitive": "drive_forward",
+      "p1": 10,
+      "exit": {
+       "kind": "front_clear",
+       "value": 40
+      },
+      "why": "to move forward and clear the corner"
+     }
+    ]
+   }
+  },
+  {
+   "at": "2026-10-26T20:00:48",
+   "kind": "read",
+   "model": "ollama:llama3.2:3b",
+   "seconds": 125.95,
+   "accepted": false,
+   "problems": [
+    "line 0: th is missing",
+    "line 1: th is missing",
+    "line 2: th is missing",
+    "line 3: th is missing",
+    "line 4: th is missing",
+    "line 5: th is missing",
+    "line 6: th is missing",
+    "line 7: th is missing",
+    "line 8: th is missing",
+    "line 9: th is missing",
+    "line 10: th is missing",
+    "line 11: th is missing",
+    "line 12: th is missing",
+    "line 13: th is missing",
+    "line 14: th is missing",
+    "line 15: th is missing",
+    "line 16: th is missing",
+    "line 17: th is missing",
+    "line 18: th is missing",
+    "line 19: th is missing",
+    "line 20: th is missing",
+    "line 21: th is missing",
+    "line 22: th is missing",
+    "line 23: th is missing",
+    "line 24: th is missing",
+    "line 25: th is missing",
+    "line 26: th is missing",
+    "line 27: th is missing",
+    "line 28: th is missing",
+    "line 29: th is missing",
+    "line 30: th is missing",
+    "line 31: th is missing",
+    "line 32: th is missing"
+   ],
+   "input": "Our house. A cat is a small animal that walks by itself and often comes closer to people; it is not food. The kitchen is in the north-east of the house. A ripe fruit smells sweet and gives energy; a rotten fruit is brown and takes energy away.\n",
+   "output": {
+    "lines": [
+     {
+      "kind": "word",
+      "en": "Our",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "note",
+      "en": "A cat is a small animal that walks by itself and often comes closer to people; it is not food.",
+      "th": ""
+     },
+     {
+      "kind": "word",
+      "en": "The",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "note",
+      "en": "Kitchen is in the north-east of the house.",
+      "th": ""
+     },
+     {
+      "kind": "word",
+      "en": "A",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "note",
+      "en": "Ripe fruit smells sweet and gives energy; a rotten fruit is brown and takes energy away.",
+      "th": ""
+     },
+     {
+      "kind": "word",
+      "en": "is",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "word",
+      "en": "a",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "note",
+      "en": "small animal",
+      "th": ""
+     },
+     {
+      "kind": "word",
+      "en": "that",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "note",
+      "en": "walks by itself and often comes closer to people; it is not food.",
+      "th": ""
+     },
+     {
+      "kind": "word",
+      "en": "and",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "note",
+      "en": "often comes closer to people; it is not food.",
+      "th": ""
+     },
+     {
+      "kind": "word",
+      "en": "is",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "note",
+      "en": "not food.",
+      "th": ""
+     },
+     {
+      "kind": "word",
+      "en": "The",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "note",
+      "en": "Kitchen is in the north-east of the house.",
+      "th": ""
+     },
+     {
+      "kind": "word",
+      "en": "A",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "note",
+      "en": "Ripe fruit smells sweet and gives energy; a rotten fruit is brown and takes energy away.",
+      "th": ""
+     },
+     {
+      "kind": "word",
+      "en": "ripe",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "note",
+      "en": "fruit smells sweet and gives energy; a rotten fruit is brown and takes energy away.",
+      "th": ""
+     },
+     {
+      "kind": "word",
+      "en": "smells",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "note",
+      "en": "sweet and gives energy; a rotten fruit is brown and takes energy away.",
+      "th": ""
+     },
+     {
+      "kind": "word",
+      "en": "and",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "note",
+      "en": "gives energy; a rotten fruit is brown and takes energy away.",
+      "th": ""
+     },
+     {
+      "kind": "word",
+      "en": "a",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "note",
+      "en": "rotten fruit is brown and takes energy away.",
+      "th": ""
+     },
+     {
+      "kind": "word",
+      "en": "is",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "note",
+      "en": "brown and takes energy away.",
+      "th": ""
+     },
+     {
+      "kind": "word",
+      "en": "and",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "note",
+      "en": "takes energy away.",
+      "th": ""
+     },
+     {
+      "kind": "word",
+      "en": "A",
+      "th": "",
+      "desc": {
+       "moves_self": false,
+       "came_closer": false,
+       "touched": false,
+       "food": false
+      }
+     },
+     {
+      "kind": "note",
+      "en": "Ripe fruit smells sweet and gives energy; a rotten fruit is brown and takes energy away.",
+      "th": ""
+     }
+    ]
+   }
+  },
+  {
+   "at": "2026-10-26T19:58:42",
+   "kind": "name",
+   "model": "ollama:llama3.2:3b",
+   "seconds": 6.95,
+   "accepted": true,
+   "problems": [],
+   "input": {
+    "moves_by_itself": false,
+    "came_closer": false,
+    "hurt_when_touched": null,
+    "is_food": false,
+    "changes_look": true,
+    "size_m": 0.22,
+    "times_met": 2
+   },
+   "output": {
+    "name_en": "plant",
+    "name_th": "ผร์มาสัฉ",
+    "used": [
+     "changes_look",
+     "size_m"
+    ],
+    "why": "The plant changes its appearance and has a consistent size, indicating it is not an animal or food."
+   }
+  },
+  {
+   "at": "2026-10-26T19:58:35",
+   "kind": "name",
+   "model": "ollama:llama3.2:3b",
+   "seconds": 5.81,
+   "accepted": true,
+   "problems": [],
+   "input": {
+    "moves_by_itself": true,
+    "came_closer": false,
+    "hurt_when_touched": null,
+    "is_food": false,
+    "changes_look": true,
+    "size_m": 0.5,
+    "times_met": 38
+   },
+   "output": {
+    "name_en": "plant",
+    "name_th": "สปาน",
+    "used": [
+     "moves_by_itself",
+     "changes_look"
+    ],
+    "why": "It moves on its own and changes appearance, but does not have a distinct smell or taste."
+   }
+  },
+  {
+   "at": "2026-10-26T19:58:29",
+   "kind": "name",
+   "model": "ollama:llama3.2:3b",
+   "seconds": 9.15,
+   "accepted": true,
+   "problems": [],
+   "input": {
+    "moves_by_itself": false,
+    "came_closer": false,
+    "hurt_when_touched": null,
+    "is_food": false,
+    "changes_look": true,
+    "size_m": 0.3,
+    "times_met": 75
+   },
+   "output": {
+    "name_en": "plant",
+    "name_th": "สรัามหีผย์",
+    "used": [
+     "changes_look",
+     "size_m"
+    ],
+    "why": "The plant changes its appearance and has a consistent size, indicating it is not an animal or food source."
+   }
+  }
+ ],
+ "for_a_person": [],
+ "snapshot_at": "2026-11-05 04:14 +0700"
+}

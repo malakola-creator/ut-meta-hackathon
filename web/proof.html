@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proof register</title>
+<style>
+  :root { --bg: #f6f5f1; --fg: #1d1d1b; --muted: #6b6a66; --card: #ffffff; --line: #d9d6cf; --ok: #1f8a4c; --bad: #b3361f; --wait: #a86a00; --chip: #eeebe4; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #161615; --fg: #ecebe6; --muted: #a09e97; --card: #20201e; --line: #3a3935; --ok: #4cc27f; --bad: #f07a62; --wait: #e2b23f; --chip: #2b2a27; } }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.5 system-ui, "Noto Sans Thai", sans-serif; }
+  header, main { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+  h1 { font-size: 22px; margin: 18px 0 2px; }
+  h2 { font-size: 16px; margin: 0 0 8px; }
+  .lead { color: var(--muted); margin: 0 0 14px; max-width: 900px; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin-bottom: 14px; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 12.5px; }
+  .chip { display: inline-block; background: var(--chip); border-radius: 999px; padding: 1px 8px; margin: 1px 3px 1px 0; font-size: 12.5px; white-space: nowrap; }
+  .ok { color: var(--ok); } .bad { color: var(--bad); } .wait { color: var(--wait); } .muted { color: var(--muted); }
+  .th { color: var(--muted); font-size: 12.5px; }
+  .tabs button { font: inherit; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
+  .tabs button.on { border-color: var(--fg); }
+  .legend { color: var(--muted); font-size: 12.5px; margin-top: 6px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Proof register</h1>
+  <p class="lead">Meta's models propose; the mind decides. Everything the mind holds from outside says how it was proven, and every model proposal shows which checks it passed or failed.
+    Names are kept in two languages in the data because the gate requires both; this page shows the English.</p>
+  <div class="tabs" id="tabs"></div>
+  <p class="legend" id="snap"></p>
+</header>
+<main>
+  <section><h2>Needs a person</h2><div id="person"></div>
+    <div class="legend">Kinds in view with no name yet (the mind asks aloud), and kinds a model failed to name three times. A person answers on the "point and say" page.</div></section>
+  <section><h2>What the mind knows, and how it was proven</h2><div id="kinds"></div>
+    <div class="legend">❓ still asking · ✅ answered. Source: <span class="chip">book:</span> read from a book · <span class="chip">given:</span> a name a person or model gave (through the gate) ·
+      <span class="chip">experience</span> seen by the body itself · <span class="chip">exchange:</span> told by another body</div></section>
+  <section><h2>Processes a model proposed (hook H4)</h2><div id="props"></div>
+    <div class="legend">A proposal is only a candidate: rehearsed beside the mind's own ways, tried when it is the best, learnt only when a real try answered.</div></section>
+  <section><h2>Every model proposal and the gate's verdict</h2><div id="log"></div></section>
+  <section><h2>Changes from outside (audit)</h2><div id="edits"></div></section>
+</main>
+<script>
+let agent = "vhum", last = null;
+const FULL = { vhum: "virtual human (vhum)", mehum: "meta human (mehum)", vcat: "virtual cat (vcat)" };
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const table = (head, rows) => rows.length ? "<table><tr>" + head.map(h => "<th>" + h + "</th>").join("") + "</tr>" + rows.map(r => "<tr>" + r.map(c => "<td>" + c + "</td>").join("") + "</tr>").join("") + "</table>" : "<p class='muted'>none yet</p>";
+function when(t) { return t ? String(t).replace("T", " ") : ""; }
+function both(en, th) { return esc(en || th || ""); }                                              // the English name (the other language stays in the data)
+function render() {
+  const d = last; if (!d) return;
+  document.getElementById("tabs").innerHTML = Object.keys(d.agents).map(a => "<button class='" + (a === agent ? "on" : "") + "' onclick=\"agent='" + a + "';render()\">" + esc(FULL[a] || a) + "</button>").join(" ");
+  const A = d.agents[agent] || {};
+  document.getElementById("person").innerHTML = table(["body", "thing", "kind", "why"],
+    d.for_a_person.map(p => [esc(p.agent || "—"), p.sid === null ? "—" : "id " + p.sid, both(p.label_en || p.cell, p.label_th),
+      p.why === "name" ? "<span class='wait'>❓ what is it called</span>" : "<span class='bad'>" + esc(p.why) + "</span>"]));
+  if (A.error) { document.getElementById("kinds").innerHTML = "<p class='bad'>" + esc(A.error) + "</p>"; return; }
+  document.getElementById("kinds").innerHTML = table(["kind (keyed by what it does)", "called", "question → answer (by)", "met"],
+    (A.kinds || []).map(k => ["<code>" + esc(k.key.replace("kind|", "")) + "</code>", both(k.label_en, k.label_th),
+      k.asking.map(q => (q.status === "open" ? "<span class='wait'>❓</span> " : "<span class='ok'>✅</span> ") + esc(q.en || q.th) +
+        (q.status === "open" ? "" : " → " + esc(q.answer_en || q.answer_th) + " <span class='chip'>" + esc(q.by) + "</span>")).join("<br>"), esc(k.met)]));
+  document.getElementById("props").innerHTML = table(["proposal", "from", "tries", "answered", "learnt"],
+    (A.proposals || []).map(p => [both(p.en, p.th) + "<br><span class='muted'>" + esc(p.key) + "</span>", esc(p.from), esc(p.tries), esc(p.answered),
+      p.learnt ? "<span class='ok'>✅</span>" : "<span class='muted'>—</span>"]));
+  document.getElementById("log").innerHTML = table(["when", "task", "model", "proposed", "gate"],
+    d.log.map(r => {
+      const o = r.output || {}, i = r.input || {};
+      const what = r.kind === "teach" ? "said: “" + esc(i.said) + "” → " + both(o.name_en, o.name_th)
+                 : (r.kind === "name" || r.kind === "look_name") ? both(o.name_en, o.name_th)
+                 : r.kind === "compose" ? esc((o.steps || []).map(s => s.primitive).join(" → "))
+                 : r.kind === "read" ? esc((o.lines || []).length + " lines") : "";
+      return [esc(when(r.at)), esc(r.kind) + (i.by_voice ? " 🎤" : ""), esc(r.model) + "<br><span class='muted'>" + esc(r.seconds) + " s</span>", what,
+              r.accepted ? "<span class='ok'>✅ passed</span>" : "<span class='bad'>❌ " + esc((r.problems || []).join("; ")) + "</span>"];
+    }));
+  document.getElementById("edits").innerHTML = table(["when", "body", "store", "key", "by", "before → after"],
+    (A.edits || []).map(e => [esc(new Date(e.at * 1000).toLocaleString("en-GB")), esc(agent), esc(e.store), "<code>" + esc(e.key) + "</code>", esc(e.by),
+      esc(JSON.stringify((e.before || {}).given_en ?? null)) + " → " + esc(JSON.stringify((e.after || {}).given_en ?? (e.after || {}).en ?? null))]));
+}
+async function load() {
+  try { last = await (await fetch("proofdata")).json(); render(); } catch (e) { return; }
+  if (last.snapshot_at) {                                  // a frozen register (tools/proof_snapshot.py): say when, stop refreshing
+    document.getElementById("snap").textContent = "A snapshot of the register taken " + last.snapshot_at + " from the live platform (the live page refreshes every 3 s).";
+    clearInterval(timer);
+  }
+}
+load(); const timer = setInterval(load, 3000);
+</script>
+</body>
+</html>

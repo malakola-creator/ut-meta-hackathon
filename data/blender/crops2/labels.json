@@ -1,0 +1,65 @@
+{
+ "shelf_4.png": {
+  "kind": "shelf",
+  "state": "",
+  "th": "ชั้นหนังสือ",
+  "en": "a bookshelf",
+  "view": "2.710,-2.300,1.500,2.710,-4.500,0.900"
+ },
+ "cleaner_5.png": {
+  "kind": "cleaner",
+  "state": "",
+  "th": "หุ่นยนต์ทำความสะอาด",
+  "en": "a cleaning robot",
+  "view": "5.324,0.000,0.900,4.324,0.000,0.100"
+ },
+ "charger_9.png": {
+  "kind": "charger",
+  "state": "",
+  "th": "ที่ชาร์จไฟ",
+  "en": "a charging station",
+  "view": "5.552,3.394,0.900,4.552,3.394,0.050"
+ },
+ "threat_10.png": {
+  "kind": "threat",
+  "state": "",
+  "th": "สิ่งอันตราย",
+  "en": "a dangerous thing (the house's threat)",
+  "view": "7.368,5.295,1.000,6.947,4.279,0.250"
+ },
+ "tree_dead_69.png": {
+  "kind": "tree",
+  "state": "dead",
+  "th": "ต้นไม้ (dead)",
+  "en": "a tree (dead)",
+  "view": "9.608,5.821,1.500,8.850,3.992,0.900"
+ },
+ "tree_old_81.png": {
+  "kind": "tree",
+  "state": "old",
+  "th": "ต้นไม้ (old)",
+  "en": "a tree (old)",
+  "view": "9.441,7.191,1.500,9.441,3.891,1.500"
+ },
+ "tree_fruiting_94.png": {
+  "kind": "tree",
+  "state": "fruiting",
+  "th": "ต้นไม้ (fruiting)",
+  "en": "a tree (fruiting)",
+  "view": "9.280,5.763,1.500,8.017,2.714,1.500"
+ },
+ "tree_grown_150.png": {
+  "kind": "tree",
+  "state": "grown",
+  "th": "ต้นไม้ (grown)",
+  "en": "a tree (grown)",
+  "view": "9.464,5.930,1.500,9.464,3.290,1.200"
+ },
+ "agent_0.png": {
+  "kind": "agent",
+  "state": "mehum",
+  "th": "หุ่นมนุษย์อีกตัว (mehum)",
+  "en": "another humanoid body (mehum)",
+  "view": "2.309,4.882,1.400,1.467,2.849,0.850"
+ }
+}

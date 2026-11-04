@@ -1,0 +1,37 @@
+{
+ "model": "glimmer:muse-glimmer-30b-q5",
+ "size": "thumb",
+ "score": {
+  "A": 0,
+  "B": 1,
+  "C": 1
+ },
+ "n": 1,
+ "rows": [
+  {
+   "file": "shelf_4.png",
+   "truth": "a bookshelf",
+   "A": {
+    "name_en": "small statue",
+    "name_th": "รูปปั้นเล็ก",
+    "hit": false,
+    "gate": true,
+    "s": 24.7
+   },
+   "B": {
+    "name_en": "bookshelf",
+    "name_th": "ชั้นหนังสือ",
+    "hit": true,
+    "gate": true,
+    "s": 17.7
+   },
+   "C": {
+    "name_en": "bookshelf",
+    "name_th": "ชั้นหนังสือ",
+    "hit": true,
+    "gate": true,
+    "s": 30.3
+   }
+  }
+ ]
+}

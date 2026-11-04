@@ -1,0 +1,18 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+data/*
+!data/proposals.jsonl
+!data/proof_snapshot.json
+!data/look/
+!data/blender/
+data/blender/*
+!data/blender/crops2/
+!data/blender/targets.json
+config.local.json
+.env
+*.key
+models/
+docs/hackaton_detail.pdf
+# the video storyboard, cat renders and Sketchfab models: never in the public repo
+ut-meta-video/

@@ -1,0 +1,22 @@
+{
+ "date": "2026-11-04",
+ "picture": "data/look/look_5.png (the body's eye, 28 Oct)",
+ "model": "sam-3.1 (Meta Model API)",
+ "found": {
+  "cat": 0,
+  "kitchen": 0,
+  "ripe fruit": 0,
+  "robot": 0,
+  "furniture": 0,
+  "a robot vacuum": 1
+ },
+ "box_a_robot_vacuum": [
+  147,
+  162,
+  233,
+  238
+ ],
+ "pixels": 2168,
+ "seconds": 3.8,
+ "note": "the words on the shelf (cat, kitchen, ripe fruit) and the general words find nothing here; the thing's own name finds it. On 28 Oct the cut-out came from SAM 2.1 at the centre point for the same reason."
+}

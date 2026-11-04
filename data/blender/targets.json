@@ -1,0 +1,122 @@
+[
+ {
+  "name": "shelf_4",
+  "id": 4,
+  "kind": "shelf",
+  "state": "",
+  "th": "ชั้นหนังสือ",
+  "en": "a bookshelf",
+  "bearing": 1.5706,
+  "dist": 2.2,
+  "cam_z": 1.5,
+  "aim_z": 0.9
+ },
+ {
+  "name": "cleaner_5",
+  "id": 5,
+  "kind": "cleaner",
+  "state": "",
+  "th": "หุ่นยนต์ทำความสะอาด",
+  "en": "a cleaning robot",
+  "bearing": 0.0,
+  "dist": 1.0,
+  "cam_z": 0.9,
+  "aim_z": 0.1
+ },
+ {
+  "name": "charger_9",
+  "id": 9,
+  "kind": "charger",
+  "state": "",
+  "th": "ที่ชาร์จไฟ",
+  "en": "a charging station",
+  "bearing": 0.0,
+  "dist": 1.0,
+  "cam_z": 0.9,
+  "aim_z": 0.05
+ },
+ {
+  "name": "threat_10",
+  "id": 10,
+  "kind": "threat",
+  "state": "",
+  "th": "สิ่งอันตราย",
+  "en": "a dangerous thing (the house's threat)",
+  "bearing": 1.1781,
+  "dist": 1.1,
+  "cam_z": 1.0,
+  "aim_z": 0.25
+ },
+ {
+  "name": "tree_dead_69",
+  "id": 69,
+  "kind": "tree",
+  "state": "dead",
+  "th": "ต้นไม้ (dead)",
+  "en": "a tree (dead)",
+  "bearing": 1.1781,
+  "dist": 1.9800000000000002,
+  "cam_z": 1.5,
+  "aim_z": 0.9
+ },
+ {
+  "name": "tree_old_81",
+  "id": 81,
+  "kind": "tree",
+  "state": "old",
+  "th": "ต้นไม้ (old)",
+  "en": "a tree (old)",
+  "bearing": 1.5708,
+  "dist": 3.3000000000000003,
+  "cam_z": 1.5,
+  "aim_z": 1.5
+ },
+ {
+  "name": "tree_fruiting_94",
+  "id": 94,
+  "kind": "tree",
+  "state": "fruiting",
+  "th": "ต้นไม้ (fruiting)",
+  "en": "a tree (fruiting)",
+  "bearing": 1.1781,
+  "dist": 3.3000000000000003,
+  "cam_z": 1.5,
+  "aim_z": 1.5
+ },
+ {
+  "name": "fruit_rotten_147",
+  "id": 147,
+  "kind": "fruit",
+  "state": "rotten",
+  "th": "ผลไม้ (rotten)",
+  "en": "a fruit (rotten)",
+  "bearing": 0.0,
+  "dist": 0.35,
+  "cam_z": 2.1345000000000027,
+  "aim_z": 2.1345000000000027
+ },
+ {
+  "name": "tree_grown_150",
+  "id": 150,
+  "kind": "tree",
+  "state": "grown",
+  "th": "ต้นไม้ (grown)",
+  "en": "a tree (grown)",
+  "bearing": 1.5708,
+  "dist": 2.64,
+  "cam_z": 1.5,
+  "aim_z": 1.2
+ },
+ {
+  "name": "agent_0",
+  "id": -2,
+  "kind": "agent",
+  "state": "mehum",
+  "th": "หุ่นมนุษย์อีกตัว (mehum)",
+  "en": "another humanoid body (mehum)",
+  "bearing": 1.1781,
+  "dist": 2.2,
+  "cam_z": 1.4,
+  "aim_z": 0.85
+ }
+]

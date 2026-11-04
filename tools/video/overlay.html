@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>overlay</title>
+<style>
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: transparent; }
+  body { font-family: "Inter", system-ui, "Segoe UI", "Noto Sans Thai", sans-serif; color: #fff; }
+  #stage { position: absolute; inset: 0; }
+  .el { position: absolute; }
+  .card { background: rgba(8, 8, 10, .74); border: 2px solid rgba(255, 255, 255, .16); border-radius: 22px; padding: 30px 40px; box-shadow: 0 12px 48px rgba(0, 0, 0, .45); }
+  .topic { color: #e8a33d; font-size: 28px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+  .q { font-size: 46px; font-weight: 700; line-height: 1.2; margin-top: 8px; }
+  .a { font-size: 34px; color: #d9d5cc; line-height: 1.3; margin-top: 10px; }
+  .n { font-size: 108px; font-weight: 900; line-height: 1.05; margin-top: 14px; letter-spacing: -.02em; }
+  .n small { font-size: 36px; font-weight: 600; color: #d9d5cc; letter-spacing: 0; margin-right: 34px; }
+  .stamp { position: absolute; font-weight: 900; letter-spacing: .08em; padding: 8px 26px; border: 7px solid; border-radius: 16px; font-size: 62px; text-transform: uppercase; transform: rotate(-7deg); white-space: nowrap; }
+  .stamp.ok { color: #35d872; border-color: #35d872; background: rgba(0, 40, 12, .62); }
+  .stamp.no { color: #ff4d3f; border-color: #ff4d3f; background: rgba(55, 0, 0, .62); }
+  .stamp.inf { color: #6db4ff; border-color: #6db4ff; background: rgba(0, 20, 55, .62); transform: rotate(0); font-size: 36px; }
+  .lt { position: absolute; left: 44px; bottom: 44px; background: rgba(0, 0, 0, .62); padding: 8px 20px; border-radius: 10px; font-size: 24px; color: #d7d2c8; }
+  .sub { position: absolute; left: 120px; right: 120px; bottom: 96px; text-align: center; font-size: 42px; font-weight: 600; line-height: 1.35; }
+  .sub span { background: rgba(0, 0, 0, .6); padding: 6px 18px; border-radius: 10px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  .big { position: absolute; left: 0; right: 0; text-align: center; font-weight: 800; font-size: 84px; line-height: 1.15; text-shadow: 0 4px 24px rgba(0, 0, 0, .8); }
+  .big.red { color: #ff4d3f; } .big.green { color: #35d872; }
+  .mono { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .row { display: flex; align-items: center; gap: 18px; font-size: 32px; padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, .1); }
+  .row .who { color: #a9a39a; width: 360px; font-size: 24px; }
+  .row .ok { color: #35d872; font-weight: 700; } .row .no { color: #ff4d3f; font-weight: 700; }
+  .chip { display: inline-block; padding: 6px 18px; border-radius: 999px; background: rgba(255, 255, 255, .12); border: 2px solid rgba(255, 255, 255, .25); font-size: 30px; margin: 6px 8px 6px 0; }
+  .chip.no { border-color: #ff4d3f; color: #ff9a92; } .chip.ok { border-color: #35d872; color: #9af0b8; background: rgba(0, 60, 20, .5); }
+  .balloon { position: absolute; background: #fff; color: #111; border-radius: 28px; padding: 14px 26px; font-size: 40px; font-weight: 700; box-shadow: 0 8px 30px rgba(0, 0, 0, .5); }
+  .balloon:after { content: ""; position: absolute; left: 40px; bottom: -22px; width: 26px; height: 26px; background: #fff; border-radius: 50%; }
+  .balloon small { display: block; font-size: 22px; font-weight: 500; color: #666; }
+  .grid { position: absolute; display: grid; grid-template-columns: repeat(3, 268px); gap: 16px; }
+  .tile { position: relative; width: 268px; height: 268px; border-radius: 16px; overflow: hidden; border: 6px solid rgba(255, 255, 255, .2); background: #000; }
+  .tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .tile.ok { border-color: #35d872; } .tile.no { border-color: #ff4d3f; } .tile.near { border-color: #ffd166; }
+  .tile .tag { position: absolute; left: 0; right: 0; bottom: 0; padding: 6px 10px; font-size: 22px; background: rgba(0, 0, 0, .7); }
+  .tile.ok .tag { color: #9af0b8; } .tile.no .tag { color: #ff9a92; } .tile.near .tag { color: #ffe3a3; }
+  .tile .mark { position: absolute; top: 6px; right: 10px; font-size: 44px; font-weight: 900; }
+  .credits { position: absolute; right: 90px; width: 760px; font-size: 26px; line-height: 1.5; color: #e8e4dc; }
+  .credits .r { display: flex; justify-content: space-between; gap: 14px; border-bottom: 1px solid rgba(255, 255, 255, .12); padding: 6px 0; }
+  .credits .r .m { color: #a9a39a; font-size: 20px; }
+  table.t { border-collapse: collapse; font-size: 34px; }
+  table.t th, table.t td { padding: 10px 26px; border-bottom: 1px solid rgba(255, 255, 255, .15); text-align: center; }
+  table.t th { color: #a9a39a; font-size: 24px; font-weight: 600; }
+  table.t td:first-child { text-align: left; }
+  .box { position: absolute; border: 6px solid; border-radius: 6px; }
+  .flow { position: absolute; left: 0; right: 0; text-align: center; font-size: 40px; font-weight: 600; line-height: 1.6; }
+  .flow b { color: #35d872; }
+</style></head>
+<body><div id="stage"></div>
+<script>
+// ------------------------------------------------------------------ data and helpers
+let D = null, SHOT = {};
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const ease = (x) => { x = clamp(x, 0, 1); return x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; };
+const fade = (t, t0, t1, out0, out1) => {                       // 0 → 1 over t0..t1, then 1 → 0 over out0..out1 (both optional)
+  let v = t1 > t0 ? ease((t - t0) / (t1 - t0)) : (t >= t0 ? 1 : 0);
+  if (out0 !== undefined) v = Math.min(v, 1 - ease((t - out0) / (out1 - out0)));
+  return clamp(v, 0, 1);
+};
+const pop = (t, t0) => t < t0 ? 0 : (t < t0 + .18 ? 1.25 - 1.25 * (t - t0) / .18 + 1 * (t - t0) / .18 : 1);   // a stamp slams in
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const file = (p) => "file://" + p;
+const count = (t, t0, t1, n) => Math.round(n * ease((t - t0) / (t1 - t0)));
+function stamp(kind, text, x, y, t, t0, rot) {
+  if (t < t0) return "";
+  const s = pop(t, t0);
+  return `<div class="stamp ${kind}" style="left:${x}px;top:${y}px;transform:rotate(${rot ?? -7}deg) scale(${s});transform-origin:center">${esc(text)}</div>`;
+}
+function platformLabel() { return `<div class="lt">platform</div>`; }
+function pinned(clip, t, key, fallback) {                          // where a thing sits on the footage at time t (0..1 → px)
+  const f = D.footage && D.footage[clip];
+  if (f && f.frames.length) {
+    const i = clamp(Math.round(t * f.fps), 0, f.frames.length - 1);
+    const p = f.frames[i].places[key];
+    if (p) return [p[0] * 1920, (1 - p[1]) * 1080];
+  }
+  return fallback;
+}
+function cues(line) {                                              // groups of spoken words that follow the written sentences (and clauses after : ;), 9 words at most
+  if (line._cues) return line._cues;
+  const parts = line.text.split(/(?<=[.:;?!])\s+/).map(p => p.trim().split(/\s+/).filter(Boolean).length);
+  const out = []; let i = 0;
+  for (const n of parts) {
+    let g = line.words.slice(i, i + n); i += n;
+    const k = Math.ceil(g.length / Math.ceil(g.length / 9));              // a long sentence in even parts, never a lone last word
+    for (let j = 0; j < g.length; j += k) out.push(g.slice(j, j + k));
+  }
+  if (i < line.words.length) out.push(line.words.slice(i));
+  return (line._cues = out);
+}
+function subtitles(t) {                                            // the words being spoken now
+  for (const line of D.narration) {
+    if (!line.words.length) continue;
+    for (const g of cues(line)) {
+      const a = line.start + g[0].t, b = line.start + g[g.length - 1].t + g[g.length - 1].d + .4;
+      if (t >= a && t <= b) return `<div class="sub"><span>${esc(g.map(w => w.w).join(" "))}</span></div>`;
+    }
+  }
+  return "";
+}
+// ------------------------------------------------------------------ the shots (absolute seconds; starts from narration.json)
+function shotStart(id) { return D.narration.find(l => l.id === id).start; }
+
+function D1(t) {                                                    // 0–12: the required line, then the first wrong name in the world
+  let h = platformLabel();
+  const a = fade(t, .6, 1.4, 4.6, 5.4);                              // a title card, as a film opens: the platform, then what the Meta layer adds
+  h += `<div class="el" style="left:0;right:0;top:250px;height:560px;background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.62) 18%,rgba(0,0,0,.62) 82%,rgba(0,0,0,0));opacity:${a}"></div>`;
+  h += `<div class="el" style="left:0;right:0;top:300px;text-align:center;opacity:${a};text-shadow:0 4px 24px rgba(0,0,0,.85)">
+    <div style="font-size:84px;font-weight:800;letter-spacing:-.01em">ultimateTruth</div>
+    <div style="font-size:34px;color:#d9d5cc;margin-top:4px">a virtual environment and a thinking system</div>
+    <div style="width:120px;height:3px;background:rgba(255,255,255,.5);margin:34px auto"></div>
+    <div style="font-size:64px;font-weight:800;color:#6db4ff">the Meta layer</div>
+    <div style="font-size:34px;color:#d9d5cc;margin-top:4px">for the Meta Global AI Developer Hackathon · an eye · understanding · teaching · a register</div></div>`;
+  if (t >= 5.5) {
+    const [x, y] = pinned("house_day", t, "cleaner_5", [1180, 600]);
+    const s = fade(t, 5.5, 6.0);
+    h += `<div class="balloon" style="left:${x - 60}px;top:${y - 230}px;opacity:${s};transform:scale(${.8 + .2 * s})">pet cat?<small>it moves by itself · it came closer · not food → a pet?</small></div>`;
+    h += stamp("ok", "gate: passed", x + 300, y - 330, t, 8.0, -6);
+    h += stamp("no", "mind: not yet", x + 240, y - 60, t, 10.2, 6);
+  }
+  return h;
+}
+function D2(t) {                                                    // 12–38: the stakes, the receipt of every wrong name, then how the mind works
+  const s = t - shotStart("D2");
+  let h = platformLabel();
+  if (s < 4.5) h += `<div class="big" style="top:420px;opacity:${fade(s, .2, .8, 3.6, 4.4)}">Push the Frontier: <span style="color:#6db4ff">robotics</span><div style="font-size:40px;font-weight:500;color:#d9d5cc;margin-top:12px">a mind that must prove a model's guess before the body moves</div></div>`;
+  if (s >= 4.5 && s < 10.5) {
+    const names = D.wrong_names;
+    let rows = "";
+    names.forEach((n, i) => { if (s >= 4.7 + i * .4) rows += `<div class="row" style="opacity:${fade(s, 4.7 + i * .4, 5.0 + i * .4)}"><span class="who">a model called the vacuum</span><b>${esc(n)}</b><span class="ok" style="margin-left:auto">✅ passed the gate</span></div>`; });
+    h += `<div class="el card" style="left:260px;top:90px;width:1360px;opacity:${fade(s, 4.5, 5, 10, 10.5)}"><div class="topic">from the log</div>${rows}</div>`;
+  }
+  if (s >= 10.5 && s < 12.4) h += `<div class="big red" style="top:440px;opacity:${fade(s, 10.5, 10.9, 12, 12.4)}">A check is not enough.</div>`;
+  if (s >= 12.4 && s < 14.6) h += `<div class="big" style="top:440px;opacity:${fade(s, 12.4, 12.9, 14.2, 14.6)}">The body has to see for itself.</div>`;
+  if (s >= 14.6) {                                                  // how the mind works: lit in the order the voice names it
+    const o = fade(s, 14.6, 15.2);
+    const lit = (t0) => s >= t0 ? 1 : .22;
+    const B = (x, y, w, hh, title, lines, t0, blue) => `<div class="el" style="left:${x}px;top:${y}px;width:${w}px;min-height:${hh}px;border:${blue ? 4 : 3}px solid ${blue ? "#6db4ff" : "rgba(255,255,255,.8)"};border-radius:18px;background:rgba(8,8,10,.72);opacity:${lit(t0)};padding:12px 16px;box-sizing:border-box"><div style="font-size:27px;font-weight:800;color:${blue ? "#6db4ff" : "#fff"};line-height:1.15;margin-bottom:4px">${title}</div>${lines.map(l => `<div style="font-size:21px;color:#d9d5cc;line-height:1.25">${l}</div>`).join("")}</div>`;
+    const A = (x1, y1, x2, y2, label, t0, blue, lx, anchor) => `<svg class="el" style="left:0;top:0;opacity:${lit(t0)}" width="1920" height="1080"><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${blue ? "#6db4ff" : "#fff"}" stroke-width="5"/><circle cx="${x2}" cy="${y2}" r="9" fill="${blue ? "#6db4ff" : "#fff"}"/><text x="${lx ?? (x1 + x2) / 2}" y="${(y1 + y2) / 2 - 14}" fill="${blue ? "#9fd0ff" : "#fff"}" font-size="24" text-anchor="${anchor || "middle"}" font-family="system-ui">${label}</text></svg>`;
+    h += `<div class="el" style="inset:0;background:rgba(0,0,0,${.45 * o})"></div>`;
+    h += `<div class="el" style="left:80px;top:60px;font-size:26px;letter-spacing:.14em;color:#a9a39a;opacity:${o}">HOW THE MIND WORKS · THE PLATFORM</div>`;
+    // the Meta layer across the top; the platform below it: Mind Bridge and deep brain in the middle, house → chip → body along the bottom
+    const col = (lines, blue) => `<div style="flex:1 1 0">${lines.map(l => `<div style="font-size:21px;color:${blue ? "#6db4ff" : "#d9d5cc"};line-height:1.25">${l}</div>`).join("")}</div>`;
+    h += `<div class="el" style="left:80px;top:110px;width:1770px;min-height:150px;border:4px solid #6db4ff;border-radius:18px;background:rgba(8,8,10,.72);opacity:${lit(23.0)};padding:12px 20px;box-sizing:border-box;display:flex;gap:30px;align-items:flex-start">`
+       + `<div style="width:330px;flex:none"><div style="font-size:27px;font-weight:800;color:#6db4ff;line-height:1.15;margin-bottom:4px">Meta layer</div>${col(["another way to teach the robot", "never commands"], true)}</div>`
+       + col(["understands what a thing is:", "what it does · is it food · how to act"])
+       + col(["SAM sees it; Muse and Llama", "name, read, compose"])
+       + col(["each understanding goes to the", "Mind Bridge as a proposal;", "the gate checks its form,", "the body or a person confirms it"]) + `</div>`;
+    h += A(1210, 260, 1210, 360, "proposes", 23.0, true);
+    h += B(1040, 360, 340, 160, "Mind Bridge", ["watches the mind,", "shows every store", "six hooks as contracts"], 22.2);
+    h += A(1040, 440, 940, 440, "hooks", 22.2);
+    h += B(520, 360, 420, 180, "deep brain: memory + world model", ["remembers things, places, outcomes", "rehearses on a copy of the world", "(a simulator copy, not learned)", "weighs, then writes new rows"], 19.0);
+    h += A(730, 540, 730, 640, "Cognitive &amp; Aggregates", 19.6, false, 712, "end");
+    h += B(80, 640, 340, 150, "the environment", ["a simulated house (MuJoCo)", "bodies and things · senses:", "eye, ear, nose, tongue, touch"], 15.0);
+    h += A(420, 715, 520, 715, "senses", 15.6);
+    h += B(520, 640, 420, 150, "mesh chip: the cognitive model", ["the mind's table, decision rows", "the same model in silicon and in software, bit for bit"], 16.4);
+    h += A(940, 715, 1050, 715, "acts", 17.6);
+    h += B(1050, 655, 380, 120, "body layer", ["one command, each body's gait", "moves in the house"], 18.0);
+    h = h.replace(/opacity:1;padding/g, "opacity:" + o + ";padding");
+    // the moving parts: a pulse that travels each lit arrow, over and over
+    const pulse = (x1, y1, x2, y2, t0, period, color, r) => {
+      if (s < t0) return "";
+      const u = ((s - t0) % period) / period, x = x1 + (x2 - x1) * u, y = y1 + (y2 - y1) * u;
+      return `<div class="el" style="left:${x - r}px;top:${y - r}px;width:${2 * r}px;height:${2 * r}px;border-radius:50%;background:${color};box-shadow:0 0 18px ${color}"></div>`;
+    };
+    h += pulse(420, 715, 520, 715, 15.6, 1.1, "#ffd166", 10);          // a sense frame into the chip
+    h += pulse(940, 715, 1050, 715, 17.6, 1.1, "#ffd166", 10);         // a command out to the body
+    h += pulse(730, 540, 730, 640, 19.6, 1.6, "#35d872", 9);           // a row written down into the table
+    h += pulse(1210, 260, 1210, 360, 23.0, 1.5, "#6db4ff", 10);        // a proposal down into the Mind Bridge
+    h += pulse(1040, 440, 940, 440, 23.6, 1.5, "#6db4ff", 10);         // and on to the deep brain
+    if (s >= 20.2) {                                                   // the row itself: a small card going down from the deep brain into the chip
+      const u = ((s - 20.2) % 1.6) / 1.6, y = 548 + 90 * u;
+      h += `<div class="el mono" style="left:752px;top:${y}px;padding:4px 12px;border-radius:8px;background:#35d872;color:#06200f;font-size:20px;font-weight:700;opacity:${1 - u * u}">row: approach → when seen, eat</div>`;
+    }
+    if (s >= 23.4) {                                                   // a proposal card coming down from the Meta layer to the Mind Bridge, stamped on arrival
+      const u = ((s - 23.4) % 2.6) / 2.6, y = 212 + 90 * Math.min(1, u * 1.8);
+      const stamped = u > 0.6;
+      h += `<div class="el" style="left:1270px;top:${y}px;padding:6px 14px;border-radius:10px;background:#fff;color:#111;font-size:22px;font-weight:700">pet cat?</div>`;
+      if (stamped) h += `<div class="el" style="left:1385px;top:${y + 4}px;font-size:22px;font-weight:900;color:#35d872;transform:rotate(-6deg);white-space:nowrap">GATE ✓ · MIND: not yet</div>`;
+    }
+  }
+  return h;
+}
+function D3(t) {                                                    // 42–66: it reads and says what things do; names with its reasons; the Mind Bridge takes the understanding
+  const s = t - shotStart("D3");
+  let h = platformLabel();
+  const glim = D.reads.find(r => r.model.startsWith("glimmer")) || { lines: [] };
+  const llama = D.reads.find(r => r.model.startsWith("ollama")) || { lines: [], problems: [] };
+  const descOf = (l) => { const d = l.desc || {}; const bits = []; if (d.moves_self) bits.push("moves by itself"); if (d.came_closer) bits.push("came closer"); if ("food" in d) bits.push(d.food ? "is food" : "not food"); if (d.touched === false) bits.push("did not hurt"); return bits.join(" · "); };
+  if (s < 8.5) {                                                    // reading: what each thing does, as the model understood it
+    const o = fade(s, 0, .6, 7.8, 8.5);
+    let rows = "";
+    glim.lines.filter(l => l.kind === "word").forEach((l, i) => {
+      if (s < .8 + i * .55) return;
+      const rotten = /rotten/i.test(l.en || "");
+      rows += `<div class="row"><span><b>${esc(l.en)}</b></span><span style="margin-left:auto;color:${rotten ? "#ffd166" : "#9af0b8"}">${esc(descOf(l) || "a word, no description")}</span></div>`;
+    });
+    h += `<div class="el card" style="left:70px;top:70px;width:1000px;opacity:${o}"><div class="topic">Muse Glimmer 30B reads a page → what each thing does</div>${rows || "<div class='a'>…</div>"}
+      ${s >= 4.6 ? `<div class="a" style="margin-top:14px;opacity:${fade(s, 4.6, 5.1)}"><span style="color:#ffd166">"rotten fruit is food"</span>: the form passed the gate; the page said it takes energy away. The mind holds it as a proposal; <b style="color:#fff">the body's own meals decide</b>.</div>` : ""}
+</div>`;
+    if (s >= 1.0 && D.cat) {                                           // the same chain on the cat the body shares the house with (5 Nov): the eye's frame, SAM 3.1 by the word, two namers, the mind's own kind
+      const c = D.cat, oc = fade(s, 1.0, 1.6, 7.8, 8.5);
+      const run = (m) => (c.names.runs || []).find(r => (r.model || "").startsWith(m)) || {};
+      const g = run("glimmer"), sp = run("meta");
+      const chip = (t0, cls, text) => s >= t0 ? `<div style="margin-top:8px;opacity:${fade(s, t0, t0 + .4)}"><span class="chip ${cls}">${text}</span></div>` : "";
+      h += `<div class="el" style="left:1160px;top:70px;width:300px;height:300px;opacity:${oc};border-radius:18px;overflow:hidden;border:3px solid #ffd166"><img src="${file(c.cut)}" style="width:100%;height:100%;object-fit:cover"></div>`;
+      h += `<div class="el" style="left:1160px;top:378px;width:300px;font-size:20px;color:#ffd166;opacity:${oc}">the eye's frame, the cat walking</div>`;
+      h += `<div class="el card" style="left:1470px;top:70px;width:380px;opacity:${oc}"><div class="topic">the cat, by the same chain</div>
+        ${chip(2.0, "ok", `SAM 3.1: "a cat" ✓ ${esc(String(c.sam.seconds))} s`)}
+        ${chip(2.6, "no", "a dog ✗ · a robot vacuum ✗ · a bowl ✗")}
+        ${chip(3.2, "ok", `Glimmer on the robot: ${esc(g.answer ? g.answer.name_en : "…")} · ${esc(String(g.seconds || ""))} s`)}
+        ${chip(4.0, "ok", `Spark 1.3 on the API: ${esc(sp.answer ? sp.answer.name_en : "…")} · ${esc(String(sp.seconds || ""))} s`)}
+        ${chip(5.0, "", "the mind's own kind: moves by itself · comes closer · not food")}
+        ${chip(6.0, "", "→ Mind Bridge: a proposal, until the body watches")}</div>`;
+    }
+  }
+  if (s >= 8.5 && s < 11.8) {                                       // the shelf words are what SAM 3.1 looks for: none of them is here
+    const o = fade(s, 8.5, 9, 11.3, 11.8);
+    let chips = "";
+    D.prompts.slice(0, 10).forEach((w, i) => { const on = s >= 8.8 + i * .18, no = s >= 10 + i * .12; chips += `<span class="chip ${no ? "no" : ""}" style="opacity:${on ? 1 : 0}">${esc(w)}${no ? " ✗" : ""}</span>`; });
+    h += `<div class="el card" style="left:260px;top:160px;width:1400px;opacity:${o}"><div class="topic">what it read is what SAM 3.1 looks for</div><div style="margin-top:14px">${chips}</div><div class="a" style="margin-top:14px">nothing it has read about is in this picture (SAM 3.1, 4 Nov) → so it cuts out what is in front of it</div></div>`;
+  }
+  if (s >= 11.8 && s < 24) {                                        // the eye's picture, the cut-out, the name with its reasons
+    const o = fade(s, 11.8, 12.3);
+    const sz = 700, x0 = 90, y0 = 90, k = sz / 384;
+    h += `<div class="el" style="left:${x0}px;top:${y0}px;width:${sz}px;height:${sz}px;opacity:${o};border-radius:18px;overflow:hidden;border:3px solid rgba(255,255,255,.25)"><img src="${file(D.look_full)}" style="width:100%;height:100%"></div>`;
+    const b = (D.look_names.find(l => l.box) || {}).box || [149, 163, 231, 235];
+    const g = fade(s, 12.6, 13.4);
+    h += `<div class="box" style="left:${x0 + b[0] * k}px;top:${y0 + b[1] * k}px;width:${(b[2] - b[0]) * k * g}px;height:${(b[3] - b[1]) * k * g}px;border-color:#ffd166;opacity:${o}"></div>`;
+    h += `<div class="el" style="left:${x0}px;top:${y0 + sz + 10}px;font-size:26px;color:#ffd166;opacity:${o * fade(s, 13, 13.5)}">cut out from the centre (SAM 2.1) · the body's eye, 28 Oct</div>`;
+    if (s >= 13.8) {
+      const o2 = fade(s, 13.8, 14.4) * o;
+      const nm = D.look_names.filter(l => l.name_en && l.name_en.startsWith("robot vacuum"))[0] || { name_en: "robot vacuum cleaner", model: "muse-spark-open-1026", used: [], why: "" };
+      const USED = { moves_by_itself: "does it move by itself", came_closer: "did it come closer", is_food: "is it food", changes_look: "does its look change", size_m: "its size", times_met: "how often met", touched: "what touching did", hurt_when_touched: "did it hurt" };
+      const used = (nm.used || []).filter(u => u !== "picture").map(u => USED[u] || u.replace(/_/g, " ")).join(" · ");
+      h += `<div class="el" style="left:860px;top:${y0}px;width:300px;height:300px;opacity:${o2};border-radius:18px;overflow:hidden;border:3px solid #ffd166"><img src="${file(D.look_cut)}" style="width:100%;height:100%"></div>`;
+      h += `<div class="el card" style="left:1190px;top:${y0}px;width:660px;opacity:${o2}"><div class="topic">Muse Spark Open · what it understood</div><div class="q">${esc(nm.name_en)}</div>
+        <div class="a" style="color:#ffe3a3;font-size:26px">weighed: ${esc(used)}${used ? " · " : ""}and the picture</div>
+        <div class="a" style="font-size:26px;margin-top:8px">${esc(String(nm.why).slice(0, 170))}</div></div>`;
+      h += stamp("ok", "gate: passed", 1380, y0 + 330, t, shotStart("D3") + 17.0, -6);
+    }
+    if (s >= 18.5) {                                                // where the understanding goes: the Mind Bridge, not the body's belief
+      const o3 = fade(s, 18.5, 19.1) * o;
+      h += `<div class="el card" style="left:860px;top:${y0 + 430}px;width:990px;opacity:${o3};border-color:#6db4ff"><div class="topic" style="color:#6db4ff">→ Mind Bridge</div>
+        <div class="a">held as a <b style="color:#fff">proposal</b>: the body must watch the thing do what the model said, or a person must confirm, before the mind believes it</div>
+        ${s >= 21.5 ? `<div style="margin-top:10px;opacity:${fade(s, 21.5, 22)}"><span class="chip ok">taught the word "a robot vacuum" → SAM 3.1 finds it by name ✓ (4 Nov)</span></div>` : ""}</div>`;
+      const b2 = [147, 162, 233, 238], g2 = fade(s, 22, 23);
+      if (s >= 22) h += `<div class="box" style="left:${x0 + b2[0] * k}px;top:${y0 + b2[1] * k}px;width:${(b2[2] - b2[0]) * k * g2}px;height:${(b2[3] - b2[1]) * k * g2}px;border-color:#35d872;opacity:${o}"></div>`;
+    }
+  }
+  return h;
+}
+function D4(t) {                                                    // 68–98: what a model can name depends on what the eye gives it
+  const s = t - shotStart("D4");
+  let h = platformLabel();
+  const pics = D.pictures;
+  const gx = 960 - 418, gy = 150;
+  const phase = s < 5 ? "intro" : s < 11 ? "mujoco" : s < 17 ? "real" : s < 22 ? "thumb" : s < 26 ? "watch" : "finding";
+  const title = { intro: "what a model can name depends on what the eye gives it",
+                  mujoco: "the robot's own eye today: 48×64 of primitives · named 1 of 7 (\"marble\", \"red ball\": no model could)",
+                  real: "the realistic house at full size · Muse Glimmer 30B on the robot names 8 of 9",
+                  thumb: "the same pictures at the eye's thumbnail size · 3 of 8: lost again",
+                  watch: "watching alone, with no picture: nothing names a thing, for any model",
+                  finding: "the finding is about the eye, not the model" }[phase];
+  h += `<div class="el" style="left:0;right:0;top:48px;text-align:center;font-size:40px;font-weight:700;opacity:${fade(s, 0, .5)}">${esc(title)}</div>`;
+  if (phase !== "finding") {
+    let tiles = "";
+    pics.forEach((p, i) => {
+      let cls = "", mark = "", tag = esc(p.en.replace(/^(a|an) /, "")), style = "";
+      if (phase === "real") {
+        const r = p.glimmer.B.hit, near = !r && /sofa/i.test(p.glimmer.B.name || "");
+        if (s >= 11.3 + i * .35) { cls = r ? "ok" : "near"; mark = r ? "✓" : "≈"; tag = esc(p.glimmer.B.name || "") + (near ? " · the sofa beside the grey figure" : ""); }
+      } else if (phase === "thumb") {
+        style = "filter:blur(5px) contrast(.8);"; tag = "48×64";
+      } else if (phase === "mujoco") {
+        style = "filter:saturate(.3) blur(2px);";
+      } else if (phase === "watch") {
+        style = "filter:grayscale(1) brightness(.5);"; tag = "no picture";
+      }
+      tiles += `<div class="tile ${cls}" style="${style}"><img src="${file(p.file)}"><div class="tag">${tag}</div>${mark ? `<div class="mark" style="color:${cls === "ok" ? "#35d872" : "#ffd166"}">${mark}</div>` : ""}</div>`;
+    });
+    h += `<div class="grid" style="left:${gx}px;top:${gy}px;opacity:${fade(s, 0, .6, 25.4, 26)}">${tiles}</div>`;
+    if (phase === "mujoco") h += `<div class="el" style="left:${gx + 880}px;top:${gy + 60}px;width:420px;opacity:${fade(s, 5.2, 5.8)}"><img src="${file(D.assets.eye_scene)}" style="width:420px;image-rendering:pixelated;border-radius:14px;border:3px solid rgba(255,255,255,.3)"><div style="font-size:24px;color:#d9d5cc;margin-top:8px">the eye's own picture: a tree and the threat are the same red capsule, the cleaner a red disc</div></div>`;
+    const foot = { intro: "nine things of the house, drawn real in Blender, 384 px", mujoco: "the platform's own eye draws shapes, not things",
+                   real: "Muse Spark 1.3 on the Meta API names 8 of 9 too; with watching added, Glimmer names 9 of 9", thumb: "the cleaner becomes a ball",
+                   watch: "moves by itself · came closer · not food: true of a cat, a dog and a vacuum alike · with a picture, a model infers the thing at once: no retraining, no detecting it again" }[phase];
+    h += `<div class="el" style="left:0;right:0;top:992px;text-align:center;font-size:28px;color:#d9d5cc">${esc(foot || "")}</div>`;
+  } else {
+    const o = fade(s, 26, 26.6);
+    h += `<div class="el card" style="left:260px;top:110px;width:1400px;opacity:${o}"><div class="topic">docs/results_picture_naming.md · the same tool, pictures and scoring</div>
+      <table class="t" style="margin-top:14px;width:100%"><tr><th>what the eye gave the model</th><th>picture only</th><th>picture + watching</th></tr>
+      <tr><td>the robot's own eye, 48×64 primitives</td><td>1/7</td><td>0/7</td></tr>
+      <tr><td>the realistic house at full size · Glimmer 30B on the robot</td><td style="color:#35d872;font-weight:800">8/9</td><td style="color:#35d872;font-weight:800">9/9</td></tr>
+      <tr><td>the same · Muse Spark 1.3 on the Meta API</td><td style="color:#35d872;font-weight:800">8/9</td><td>7/9</td></tr>
+      <tr><td>the same pictures at thumbnail size</td><td>3/8</td><td>2/8</td></tr></table>
+      <div class="a" style="margin-top:18px">give a model a real, large picture and it names what it sees · what it misses is what we drew badly: the grey figure beside a sofa · so the next step is the eye: realistic and large, on the robot</div>
+      <div class="a" style="margin-top:12px;color:#6db4ff"><b>picture + watching</b>: the model infers the thing from what the body saw it do, at once · no retraining, no learning by trial, no detecting it again: the mind keeps the kind by what it does</div></div>`;
+  }
+  return h;
+}
+function D5(t) {                                                    // 88–115: point and say, seen through the WebXR page (the view rendered in Blender)
+  const s = t - shotStart("D5");
+  let h = `<div class="lt">point and say · the WebXR view, rendered in Blender</div>`;
+  // a headset's frame: soft dark corners, a reticle on the thing, a ray from the hand to it
+  h += `<div class="el" style="inset:0;box-shadow:inset 0 0 180px 60px rgba(0,0,0,.55);border-radius:60px"></div>`;
+  const [cx, cy] = pinned("xr_walk", s, "cleaner_5", [960, 700]);
+  const hx = 1500, hy = 1080;
+  const on = s >= 1.0 ? fade(s, 1.0, 1.6) : 0;
+  h += `<svg class="el" style="left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080">
+    <line x1="${hx}" y1="${hy}" x2="${cx}" y2="${cy}" stroke="#6db4ff" stroke-width="5" stroke-opacity="${.75 * on}" stroke-dasharray="18 12"/>
+    <circle cx="${cx}" cy="${cy}" r="${46 + 6 * Math.sin(s * 4)}" fill="none" stroke="#6db4ff" stroke-width="5" stroke-opacity="${on}"/>
+    <circle cx="${cx}" cy="${cy}" r="8" fill="#6db4ff" fill-opacity="${on}"/></svg>`;
+  if (s >= 1.6 && s < 13) h += `<div class="el" style="left:${cx + 60}px;top:${cy - 70}px;font-size:30px;color:#9fd0ff;opacity:${fade(s, 1.6, 2.1)}">thing #5 · what is it called?</div>`;
+  if (s >= 2 && s < 13) {
+    const text = "This is a robot vacuum.";
+    const n = Math.min(text.length, Math.floor((s - 2) * 12));
+    h += `<div class="el card" style="left:70px;top:70px;width:900px;opacity:${fade(s, 2, 2.4, 12.4, 13)}"><div class="topic">said</div><div class="q mono">“${esc(text.slice(0, n))}<span style="opacity:${Math.floor(s * 2) % 2 ? 1 : 0}">|</span>”</div>
+      ${s >= 5.5 ? `<div class="a" style="opacity:${fade(s, 5.5, 6)}">extracted: <b style="color:#fff">robot vacuum</b> · a name in each language</div>` : ""}</div>`;
+    h += stamp("ok", "gate: both languages ✓", 1010, 80, t, shotStart("D5") + 7.5, -5);
+    h += stamp("ok", "given to the mind", 1060, 260, t, shotStart("D5") + 9.5, 4);
+    if (s >= 10.5) h += `<div class="el card" style="left:70px;top:330px;width:900px;opacity:${fade(s, 10.5, 11)}"><div class="topic">pinned to what the body saw it do (hook H5)</div><div class="a mono">kind: moves by itself · not food · not readable</div><div class="a">the name belongs to the understanding, not to the pixels</div></div>`;
+  }
+  if (s >= 14) {
+    h += `<div class="el card" style="left:70px;top:70px;width:900px;opacity:${fade(s, 14, 14.5)}"><div class="topic">a thing it has not watched yet</div><div class="q mono">“This is a lamp.”</div><div class="a">the body never watched this one: no kind to hang a name on</div></div>`;
+    h += stamp("no", "409 · not yet", 1000, 140, t, shotStart("D5") + 17, -6);
+    if (s >= 17.6) h += `<div class="big" style="top:560px;font-size:64px;opacity:${fade(s, 17.6, 18.2)}">“I need to watch it first.”</div>`;
+  }
+  return h + "";
+}
+function D6(t) {                                                    // 115–135: a plan from a model: refused / accepted, then rehearsed
+  const s = t - shotStart("D6");
+  let h = platformLabel();
+  const c = D.composes;
+  const bad = c.find(x => !x.accepted), good = c.find(x => x.accepted);
+  const keep = fade(s, 0, .1, 10.4, 11.0);                           // the two plans leave before the rehearsal card comes
+  if (bad) h += `<div class="el card" style="left:70px;top:110px;width:860px;opacity:${fade(s, .6, 1.2) * keep}"><div class="topic">${esc(bad.model)} · compose</div><div class="q mono">${esc(bad.steps.join(" → ") || "…")}</div><div class="a" style="color:#ff9a92">${esc(bad.problems[0] || "")}</div></div>`;
+  if (s < 10.6) h += stamp("no", "refused", 560, 330, t, shotStart("D6") + 3.2, -8);
+  if (good) h += `<div class="el card" style="left:990px;top:110px;width:860px;opacity:${fade(s, 5.5, 6.1) * keep}"><div class="topic">${esc(good.model)} · compose · ${esc((good.situation || {}).problem || "")}</div><div class="q mono">${esc(good.steps.join(" → "))}</div><div class="a" style="font-size:26px">${esc(String((good.whys || [])[0] || "").slice(0, 150))}</div><div class="a">only the chip's own primitives · right side clear: ${esc(String((good.situation || {}).right_clear_cm || ""))} cm</div></div>`;
+  if (s < 10.6) h += stamp("ok", "passed", 1480, 330, t, shotStart("D6") + 8, 6);
+  if (s >= 11) {
+    const R = (D.rehearsals || [])[0];
+    const ranked = R ? (R.output.ranked || []).map(r => `<div class="row" style="font-size:28px"><span class="mono">${esc(String(r.key).replace(/^(proc|composed|proposed):/, m => ({ "proc:": "the mind's own · ", "composed:": "the mind composed · ", "proposed:": "the model's plan · " })[m]))}</span><span style="margin-left:auto">moved ${esc(Number(r.moved_m).toFixed(2))} m</span></div>`).join("") : "";
+    h += `<div class="el card" style="left:200px;top:300px;width:1520px;opacity:${fade(s, 11, 11.6)}"><div class="topic">→ Mind Bridge: only a candidate (hook H4) · rehearsed live against the mind's own ways, 5 Nov</div>${ranked}
+      <div class="a" style="margin-top:10px">${R ? `rank ${esc(R.output.rank)} of ${esc(R.output.ways)}: the plan passed the gate yet moved nothing in rehearsal, its exits were met at once · the rehearsal catches what the form check cannot` : "rehearsed before any step is taken"}</div></div>`;
+  }
+  return h;
+}
+function D7(t) {                                                    // 135–160: four cards: topic · question · answer · number
+  const s = t - shotStart("D7");
+  const C = D.counts, R = D.refusals;
+  const cards = [
+    ["the receipt", "What did the model understand, and what did the mind do with it?", "Every proposal is logged with the model's reasons and the gate's verdict.", [[C.proposals, "proposals"], [C.passed, "passed"], [C.refused, "refused"]]],
+    ["what gets refused", "What can the gate refuse?", "Form it cannot trust: a shelf line with no Thai, a plan step with no number.", [[R.length, "reasons"]], R.map(r => r.why.replace(/^(line|step) \d+: /, "")).join(" · ")],
+    ["what gets through", "Can a wrong name pass?", "Yes. Form is not truth. The body must watch it, or a person must teach it.", [[D.wrong_names.length, "wrong or vague names passed"], [0, "reached the mind"]]],
+    ["runs anywhere", "Can a judge run it without the robot?", "Yes: a mock of the platform, a fake model, six hooks as contracts.", [[15, "tests"], ["1.6 s", ""], [0, "keys needed"]]],
+  ];
+  const i = Math.min(3, Math.floor(s / 6.25)), s0 = i * 6.25, c = cards[i];
+  const o = fade(s, s0, s0 + .5, s0 + 5.75, s0 + 6.2);
+  const nums = c[3].map(([n, lab]) => `<span style="display:inline-block;margin-right:50px">${typeof n === "number" ? count(s, s0 + .6, s0 + 1.8, n) : esc(n)}<small> ${esc(lab)}</small></span>`).join("");
+  let h = platformLabel();
+  h += `<div class="el card" style="left:160px;top:260px;width:1600px;opacity:${o}"><div class="topic">${esc(c[0])}</div><div class="q">${esc(c[1])}</div><div class="a">${esc(c[2])}</div><div class="n">${nums}</div>${c[4] ? `<div class="a mono" style="font-size:28px;color:#ff9a92">${esc(c[4])}</div>` : ""}</div>`;
+  h += `<div class="el" style="left:0;right:0;bottom:44px;text-align:center;font-size:26px;color:#d7d2c8">the register, as data: docs/proof.md · the page: malakola--ut-meta-proof-web.modal.run</div>`;
+  return h;
+}
+function D8(t) {                                                    // 160–180: the hackathon, what was built, the register as credits, the last line
+  const s = t - shotStart("D8");
+  let h = platformLabel();
+  h += `<div class="el" style="left:70px;top:48px;opacity:${fade(s, 0, .5)}"><div style="font-size:26px;letter-spacing:.14em;color:#6db4ff">META GLOBAL AI DEVELOPER HACKATHON · 26 OCT – 4 NOV 2026</div><div style="font-size:22px;color:#a9a39a;margin-top:4px">Indie track · Push the Frontier: robotics</div></div>`;
+  const items = ["Meta's models see a thing and say what it is: what it does, is it food, how to act (SAM 3.1 / 2.1 · Muse Spark · Glimmer · Llama)",
+                 "every understanding goes to the Mind Bridge as a proposal, with the model's reasons",
+                 "the gate checks its form; the proof register keeps every proposal and verdict",
+                 "the body confirms by watching; a person confirms by point and say (web · WebXR · Android)",
+                 "a model may propose how to act; the mind rehearses it before any step (hook H4)",
+                 "six hooks as contracts, a mock of the platform, 15 tests: it runs with nothing but the repo"];
+  let list = "";
+  items.forEach((it, i) => { if (s >= .6 + i * .7) list += `<div class="row" style="font-size:27px;opacity:${fade(s, .6 + i * .7, 1.0 + i * .7)}"><span class="ok">✓</span><span>${esc(it)}</span></div>`; });
+  h += `<div class="el card" style="left:70px;top:150px;width:1000px;opacity:${fade(s, .4, .9, 15.5, 16.2)}"><div class="topic">another way to teach a robot</div>${list}</div>`;
+  const rows = D.log.slice().reverse();
+  let cr = "";
+  rows.forEach((r, i) => { const o = r.output || {}; const what = r.kind === "read" ? ((o.lines || []).length + " lines") : r.kind === "compose" ? (o.steps || []).map(x => x.primitive).join(" → ") : (o.name_en || ""); cr += `<div class="r"><span>${esc(r.kind)} · ${esc(what)}</span><span class="m">${esc(String(r.model).split(":").pop().slice(0, 22))} ${r.accepted ? "<b style='color:#35d872'>✓</b>" : "<b style='color:#ff4d3f'>✗</b>"}</span></div>`; });
+  // the register crawls up inside its own column, under the title, never over it
+  h += `<div class="el" style="left:1090px;top:150px;width:760px;height:800px;overflow:hidden;opacity:${fade(s, .5, 1.2, 15.5, 16.2)}"><div class="credits" style="right:auto;left:0;top:${800 - s * 60}px"><div class="topic" style="margin-bottom:8px">the register · ${D.counts.proposals} proposals · ${D.counts.passed} ✓ · ${D.counts.refused} ✗</div>${cr}</div></div>`;
+  if (s >= 12) h += `<div class="el" style="left:0;right:0;bottom:40px;text-align:center;font-size:17px;color:#b9b4aa;white-space:nowrap;opacity:${fade(s, 12, 12.6)}">Built with Llama · Apache-2.0 · cat models by restore50 (Siamese In Motion CC BY, Fred Free Standard) · meow by Tsester (Wikimedia Commons, CC0) · Blender · synthetic voice</div>`;
+  if (s >= 16.2) h += `<div class="big" style="top:400px;opacity:${fade(s, 16.2, 16.9)}">A model may propose.<br><span style="color:#35d872">This mind decides.</span><div style="font-size:36px;font-weight:500;color:#d9d5cc;margin-top:18px">another way to teach a robot</div></div>`;
+  return h;
+}
+const SHOTS = [["D1", D1], ["D2", D2], ["D3", D3], ["D4", D4], ["D5", D5], ["D6", D6], ["D7", D7], ["D8", D8]];
+window.UT = {
+  setup(data) { D = data; },
+  render(t) {
+    let fn = D1;
+    for (const [id, f] of SHOTS) if (t >= shotStart(id)) fn = f;
+    document.getElementById("stage").innerHTML = fn(t) + (window.NOSUB ? "" : subtitles(t));   // NOSUB: a still for the thumbnail
+    return true;
+  }
+};
+</script></body></html>

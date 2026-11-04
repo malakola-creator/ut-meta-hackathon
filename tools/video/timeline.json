@@ -1,0 +1,406 @@
+{
+ "_note": "Background per span of seconds (the overlays and the voice are placed by their own times). clip = ut-meta-video/footage/<name>.mp4 at offset; still = a path in the repo, pushed in slowly; a missing clip falls back to its still, and a missing still to black. sfx: {shot, at} = seconds after that narration line's start. The follow shot of the body is not used until its balloon-free Cycles clip is in (the EEVEE one carries the platform's own thought balloon). sfx kinds: ding, chime, buzz, pop, tick, whoosh, shutter, count (all synthesised in build.py); repeat/every make a run of them; bed = a quiet brown room tone.",
+ "fps": 24,
+ "spans": [
+  {
+   "from": 0,
+   "to": 12,
+   "clip": "house_day",
+   "offset": 0,
+   "still": "ut-meta-video/storyboard/assets/look_full.png"
+  },
+  {
+   "from": 12,
+   "to": 42,
+   "clip": "house_day",
+   "offset": 10,
+   "still": "ut-meta-video/storyboard/assets/vacuum.png"
+  },
+  {
+   "from": 42.0,
+   "to": 50.5,
+   "clip": "cat_follow",
+   "at": 7.0
+  },
+  {
+   "from": 50.5,
+   "to": 53.5,
+   "clip": "house_dusk",
+   "at": 8.5
+  },
+  {
+   "from": 53.5,
+   "to": 68,
+   "color": "#101012"
+  },
+  {
+   "from": 68,
+   "to": 99,
+   "color": "#0c0c0e"
+  },
+  {
+   "from": 99,
+   "to": 118,
+   "clip": "xr_walk",
+   "offset": 0,
+   "still": "ut-meta-video/build/teach_page.png",
+   "zoom": 1.03
+  },
+  {
+   "from": 118,
+   "to": 139,
+   "clip": "house_day",
+   "offset": 15,
+   "still": "ut-meta-video/storyboard/assets/agent.png"
+  },
+  {
+   "from": 139,
+   "to": 160,
+   "clip": "house_day",
+   "offset": 19,
+   "still": "ut-meta-video/storyboard/assets/charger.png"
+  },
+  {
+   "from": 160,
+   "to": 180,
+   "clip": "house_dusk",
+   "offset": 0,
+   "still": "ut-meta-video/storyboard/assets/cactus.png",
+   "zoom": 1.05
+  }
+ ],
+ "sfx": [
+  {
+   "shot": "D1",
+   "at": 0.6,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D1",
+   "at": 5.6,
+   "kind": "pop"
+  },
+  {
+   "shot": "D1",
+   "at": 8.0,
+   "kind": "chime"
+  },
+  {
+   "shot": "D1",
+   "at": 10.2,
+   "kind": "buzz"
+  },
+  {
+   "shot": "D2",
+   "at": 0.2,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D2",
+   "at": 4.7,
+   "kind": "tick",
+   "repeat": 9,
+   "every": 0.4
+  },
+  {
+   "shot": "D2",
+   "at": 10.5,
+   "kind": "buzz"
+  },
+  {
+   "shot": "D2",
+   "at": 12.4,
+   "kind": "chime",
+   "gain": 0.6
+  },
+  {
+   "shot": "D2",
+   "at": 14.6,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D2",
+   "at": 15.0,
+   "kind": "pop",
+   "gain": 0.6
+  },
+  {
+   "shot": "D2",
+   "at": 16.4,
+   "kind": "pop",
+   "gain": 0.6
+  },
+  {
+   "shot": "D2",
+   "at": 18.0,
+   "kind": "pop",
+   "gain": 0.6
+  },
+  {
+   "shot": "D2",
+   "at": 19.0,
+   "kind": "pop",
+   "gain": 0.6
+  },
+  {
+   "shot": "D2",
+   "at": 22.2,
+   "kind": "pop",
+   "gain": 0.6
+  },
+  {
+   "shot": "D2",
+   "at": 23.0,
+   "kind": "pop",
+   "gain": 0.8
+  },
+  {
+   "shot": "D3",
+   "at": 0.2,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D3",
+   "at": 0.8,
+   "kind": "tick",
+   "repeat": 5,
+   "every": 0.55
+  },
+  {
+   "shot": "D3",
+   "at": 4.6,
+   "kind": "buzz",
+   "gain": 0.5
+  },
+  {
+   "shot": "D3",
+   "at": 8.5,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D3",
+   "at": 10.0,
+   "kind": "tick",
+   "repeat": 10,
+   "every": 0.12
+  },
+  {
+   "shot": "D3",
+   "at": 11.8,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D3",
+   "at": 12.6,
+   "kind": "shutter"
+  },
+  {
+   "shot": "D3",
+   "at": 13.8,
+   "kind": "pop"
+  },
+  {
+   "shot": "D3",
+   "at": 17.0,
+   "kind": "chime"
+  },
+  {
+   "shot": "D3",
+   "at": 18.5,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D3",
+   "at": 22.0,
+   "kind": "shutter"
+  },
+  {
+   "shot": "D3",
+   "at": 22.3,
+   "kind": "chime",
+   "gain": 0.7
+  },
+  {
+   "shot": "D4",
+   "at": 0.2,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D4",
+   "at": 5.2,
+   "kind": "pop"
+  },
+  {
+   "shot": "D4",
+   "at": 11.3,
+   "kind": "tick",
+   "repeat": 9,
+   "every": 0.35
+  },
+  {
+   "shot": "D4",
+   "at": 17.0,
+   "kind": "whoosh",
+   "gain": 0.7
+  },
+  {
+   "shot": "D4",
+   "at": 22.0,
+   "kind": "whoosh",
+   "gain": 0.7
+  },
+  {
+   "shot": "D4",
+   "at": 26.0,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D5",
+   "at": 1.0,
+   "kind": "pop"
+  },
+  {
+   "shot": "D5",
+   "at": 2.0,
+   "kind": "tick",
+   "repeat": 12,
+   "every": 0.17
+  },
+  {
+   "shot": "D5",
+   "at": 5.5,
+   "kind": "pop",
+   "gain": 0.7
+  },
+  {
+   "shot": "D5",
+   "at": 7.5,
+   "kind": "chime"
+  },
+  {
+   "shot": "D5",
+   "at": 9.5,
+   "kind": "chime"
+  },
+  {
+   "shot": "D5",
+   "at": 10.5,
+   "kind": "whoosh",
+   "gain": 0.6
+  },
+  {
+   "shot": "D5",
+   "at": 14.0,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D5",
+   "at": 17.0,
+   "kind": "buzz"
+  },
+  {
+   "shot": "D6",
+   "at": 0.6,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D6",
+   "at": 3.2,
+   "kind": "buzz"
+  },
+  {
+   "shot": "D6",
+   "at": 5.5,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D6",
+   "at": 8.0,
+   "kind": "chime"
+  },
+  {
+   "shot": "D6",
+   "at": 11.0,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D7",
+   "at": 0.0,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D7",
+   "at": 0.6,
+   "kind": "count",
+   "repeat": 10,
+   "every": 0.12
+  },
+  {
+   "shot": "D7",
+   "at": 6.25,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D7",
+   "at": 6.85,
+   "kind": "count",
+   "repeat": 10,
+   "every": 0.12
+  },
+  {
+   "shot": "D7",
+   "at": 12.5,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D7",
+   "at": 13.1,
+   "kind": "count",
+   "repeat": 10,
+   "every": 0.12
+  },
+  {
+   "shot": "D7",
+   "at": 18.75,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D7",
+   "at": 19.35,
+   "kind": "count",
+   "repeat": 10,
+   "every": 0.12
+  },
+  {
+   "shot": "D8",
+   "at": 0.4,
+   "kind": "whoosh"
+  },
+  {
+   "shot": "D8",
+   "at": 0.6,
+   "kind": "tick",
+   "repeat": 6,
+   "every": 0.7
+  },
+  {
+   "shot": "D8",
+   "at": 16.2,
+   "kind": "chime"
+  },
+  {
+   "shot": "D3",
+   "at": 1.0,
+   "kind": "meow"
+  },
+  {
+   "shot": "D3",
+   "at": 5.4,
+   "kind": "meow",
+   "gain": 0.55
+  }
+ ],
+ "bed": {
+  "gain": 0.035
+ }
+}

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Point and say</title>
+<style>
+  :root { --bg: #f6f5f1; --fg: #1d1d1b; --muted: #6b6a66; --card: #ffffff; --line: #d9d6cf; --accent: #2f6fdf; --ok: #1f8a4c; --bad: #b3361f; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #161615; --fg: #ecebe6; --muted: #a09e97; --card: #20201e; --line: #3a3935; --accent: #6b9cff; --ok: #4cc27f; --bad: #f07a62; } }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 system-ui, "Noto Sans Thai", sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 16px; display: grid; gap: 16px; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+  @media (max-width: 760px) { main { grid-template-columns: 1fr; } }
+  h1 { font-size: 20px; margin: 16px 16px 0; max-width: 1100px; }
+  .sub { color: var(--muted); margin: 4px 16px 0; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+  canvas { width: 100%; height: auto; display: block; cursor: crosshair; border-radius: 6px; }
+  button { font: inherit; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button:disabled { opacity: .45; cursor: default; }
+  input { font: inherit; padding: 9px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); width: 100%; box-sizing: border-box; }
+  .row { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+  .muted { color: var(--muted); }
+  .ok { color: var(--ok); } .bad { color: var(--bad); }
+  ul { padding-left: 18px; margin: 6px 0; }
+  img.thumb { height: 64px; border-radius: 6px; border: 1px solid var(--line); image-rendering: pixelated; }
+  ol.stages { padding-left: 20px; margin: 6px 0; }
+</style>
+</head>
+<body>
+<h1>ชี้แล้วพูด / Point and say</h1>
+<p class="sub">คลิกสิ่งของในบ้าน แล้วพูดหรือพิมพ์ว่ามันเรียกว่าอะไร — จิตรับชื่อให้ชนิดของสิ่งนั้น แต่ยังเรียนว่ามันทำอะไรด้วยการเฝ้าดูเอง ·
+  Click a thing, say or type what it is called; the mind takes the name for its kind, and still learns what it does by watching.</p>
+<main>
+  <section class="card">
+    <canvas id="map" width="900" height="600" aria-label="map of the house"></canvas>
+    <div class="row muted" id="who"></div>
+  </section>
+  <section class="card" id="side">
+    <div id="pick" class="muted">ยังไม่ได้เลือก — คลิกสิ่งของบนแผนที่ / Nothing picked: click a thing on the map.</div>
+    <div class="row">
+      <button id="talk" class="primary" disabled>🎤 กดค้างแล้วพูด / Hold to speak</button>
+    </div>
+    <div class="row">
+      <input id="text" placeholder="หรือพิมพ์ เช่น นี่คือหุ่นยนต์ดูดฝุ่น / or type">
+      <button id="send" disabled>สอน / Teach</button>
+    </div>
+    <div id="result" style="margin-top:12px"></div>
+  </section>
+</main>
+<script>
+const AGENT = new URLSearchParams(location.search).get("agent") || "vhum";
+const $ = (id) => document.getElementById(id);
+const cv = $("map"), cx = cv.getContext("2d");
+let scene = null, picked = null, view = null, wonder = new Set();
+const KIND = { tree: ["ต้นไม้", "tree", "#3c8a3a"], fruit: ["ผลไม้", "fruit", "#d2462f"], shelf: ["ชั้นหนังสือ", "shelf", "#8a5a2b"],
+  cleaner: ["หุ่นดูดฝุ่น?", "cleaner?", "#555"], charger: ["ที่ชาร์จ?", "charger?", "#1f9d55"], threat: ["อันตราย?", "threat?", "#c0392b"], agent: ["ร่าง", "body", "#6b5bd6"] };
+
+function fit() {
+  const pts = scene.walls.flat();
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const s = Math.min((cv.width - 20) / (x1 - x0), (cv.height - 20) / (y1 - y0));
+  view = { s, x0, y1, ox: (cv.width - s * (x1 - x0)) / 2, oy: (cv.height - s * (y1 - y0)) / 2 };
+}
+const px = (x, y) => [view.ox + (x - view.x0) * view.s, view.oy + (view.y1 - y) * view.s];
+
+function draw() {
+  const css = getComputedStyle(document.documentElement);
+  cx.clearRect(0, 0, cv.width, cv.height);
+  cx.fillStyle = css.getPropertyValue("--line");
+  for (const w of scene.walls) { cx.beginPath(); w.forEach((p, i) => { const [a, b] = px(p[0], p[1]); i ? cx.lineTo(a, b) : cx.moveTo(a, b); }); cx.closePath(); cx.fill(); }
+  for (const t of scene.things) {
+    const [a, b] = px(t.x, t.y); const k = KIND[t.kind] || [t.kind, t.kind, "#888"];
+    cx.beginPath(); cx.arc(a, b, t.kind === "fruit" ? 4 : 8, 0, 7); cx.fillStyle = k[2]; cx.fill();
+    if (wonder.has(t.id)) { cx.fillStyle = "#e0a800"; cx.font = "bold 16px system-ui"; cx.fillText("❓", a + 8, b - 8); }
+    if (picked && picked.id === t.id) { cx.beginPath(); cx.arc(a, b, 14, 0, 7); cx.strokeStyle = css.getPropertyValue("--accent"); cx.lineWidth = 3; cx.stroke(); }
+  }
+  for (const bd of scene.bodies) {
+    const [a, b] = px(bd.x, bd.y);
+    cx.beginPath(); cx.arc(a, b, 9, 0, 7); cx.fillStyle = bd.key === AGENT ? css.getPropertyValue("--accent") : "#6b5bd6"; cx.fill();
+    cx.fillStyle = css.getPropertyValue("--fg"); cx.font = "13px system-ui"; cx.fillText(bd.key, a + 11, b + 4);
+  }
+}
+
+async function load() {
+  scene = await (await fetch("scene")).json();
+  try { const r = await (await fetch("asking?agent=" + AGENT)).json(); wonder = new Set((r.asking || []).filter(a => a.open.some(q => q.what === "name" || q.what === "what")).map(a => a.sid)); } catch (e) {}
+  if (!view) fit();
+  draw();
+  $("who").textContent = "ร่างที่เรียน / learning body: " + AGENT + " · ของในบ้าน / things: " + scene.things.length;
+}
+
+cv.addEventListener("click", async (ev) => {
+  const r = cv.getBoundingClientRect(), x = (ev.clientX - r.left) * cv.width / r.width, y = (ev.clientY - r.top) * cv.height / r.height;
+  let best = null, bd = 1e9;
+  for (const t of scene.things) { const [a, b] = px(t.x, t.y); const d = Math.hypot(a - x, b - y); if (d < bd) { bd = d; best = t; } }
+  for (const b of scene.bodies) if (b.key !== AGENT) { const [p, q] = px(b.x, b.y); const d = Math.hypot(p - x, q - y); if (d < bd) { bd = d; best = { id: -2, kind: "agent", x: b.x, y: b.y }; } }
+  if (!best || bd > 30) return;
+  picked = best; draw(); await describe();
+});
+
+async function describe() {
+  const k = KIND[picked.kind] || [picked.kind, picked.kind];
+  const info = await (await fetch("thing/" + picked.id + "?agent=" + AGENT)).json();
+  let html = "<b>id " + picked.id + "</b> <span class='muted'>(" + k[0] + " / " + k[1] + " — ป้ายจากโลก ไม่ใช่สิ่งที่จิตรู้ / the world's tag, not what the mind knows)</span>";
+  if (!info.ok) {
+    html += "<p class='bad'>" + AGENT + " ยังไม่เคยพบสิ่งนี้ในชีวิตนี้ / has not met this thing in this life.</p>";
+  } else {
+    const t = info.thing;
+    html += "<p>" + AGENT + " รู้จักเป็น / knows it as: <b>" + info.label_th + "</b> · " + info.label_en +
+            (t.known ? "" : " <span class='bad'>(ยังถามอยู่ว่าคืออะไร / still asking what it is)</span>") + "</p>";
+    if (info.looks && info.looks[0]) html += "<img class='thumb' alt='' src='thumb?look=" + encodeURIComponent(info.looks[0]) + "&agent=" + AGENT + "'>";
+    if (info.asking.length) html += "<ul>" + info.asking.map(q => "<li>" + (q.status === "open" ? "❓ " : "✅ ") + q.th + " / " + q.en + (q.by ? " <span class='muted'>(" + q.by + ")</span>" : "") + "</li>").join("") + "</ul>";
+  }
+  $("pick").innerHTML = html;
+  $("talk").disabled = $("send").disabled = !info.ok;
+}
+
+async function send(form) {
+  form.append("sid", picked.id); form.append("agent", AGENT); form.append("token", new URLSearchParams(location.search).get("token") || "");
+  $("result").innerHTML = "<span class='muted'>กำลังฟังและคิด… / listening and thinking…</span>";
+  const out = await (await fetch("teach", { method: "POST", body: form })).json();
+  const st = [];
+  if (out.heard) st.push("salika ได้ยิน / heard: “" + out.said + "”");
+  else if (out.said) st.push("ข้อความ / words: “" + out.said + "”");
+  if (out.answer) st.push(out.model + " (" + out.seconds + " s): " + (out.answer.named ? out.answer.name_th + " / " + out.answer.name_en : "ไม่ได้ตั้งชื่อ / no name given"));
+  if (out.problems && out.problems.length) st.push("<span class='bad'>ด่านตรวจไม่ผ่าน / gate: " + out.problems.join("; ") + "</span>");
+  if (out.why) st.push("<span class='bad'>" + out.why + "</span>");
+  if (out.ok) st.push("<span class='ok'>จิตรับชื่อแล้ว / the mind took the name — ตอบคำถาม “เรียกว่าอะไร” / answers “what is it called”</span>");
+  $("result").innerHTML = "<ol class='stages'>" + st.map(s => "<li>" + s + "</li>").join("") + "</ol>";
+  await describe(); await load();
+}
+
+$("send").onclick = () => { const f = new FormData(); f.append("text", $("text").value); send(f); };
+let rec = null, chunks = [];
+$("talk").onpointerdown = async () => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    chunks = []; rec = new MediaRecorder(stream);
+    rec.ondataavailable = (e) => chunks.push(e.data);
+    rec.onstop = () => { stream.getTracks().forEach(t => t.stop()); const f = new FormData(); f.append("audio", new Blob(chunks, { type: rec.mimeType }), "speech"); send(f); };
+    rec.start(); $("talk").textContent = "🔴 กำลังฟัง… ปล่อยเมื่อพูดจบ / listening… release when done";
+  } catch (e) { $("result").innerHTML = "<span class='bad'>ใช้ไมค์ไม่ได้ / no microphone: " + e.message + "</span>"; }
+};
+$("talk").onpointerup = $("talk").onpointerleave = () => { if (rec && rec.state === "recording") { rec.stop(); $("talk").textContent = "🎤 กดค้างแล้วพูด / Hold to speak"; } };
+
+load(); setInterval(load, 2000);
+</script>
+</body>
+</html>

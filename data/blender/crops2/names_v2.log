@@ -1,0 +1,29 @@
+agent_0.png      A miss  small pet                          สัตว์เลี้ยงตัวเล็ก
+agent_0.png      B miss  sofa                               โซฟา
+agent_0.png      C HIT   mannequin                          หุ่น
+charger_9.png    A miss  stuffed toy                        ตุ๊กตาผ้า
+charger_9.png    B HIT   charging pad                       แท่นชาร์จ
+charger_9.png    C HIT   charging pad                       แท่นชาร์จ
+cleaner_5.png    A miss  small pet                          สัตว์เลี้ยงตัวเล็ก
+cleaner_5.png    B HIT   robot vacuum cleaner               หุ่นยนต์ดูดฝุ่น
+cleaner_5.png    C HIT   robot vacuum                       หุ่นยนต์ดูดฝุ่น
+shelf_4.png      A miss  small statue                       รูปปั้นเล็ก
+shelf_4.png      B HIT   wall-mounted shelf                 ชั้นวางติดผนัง
+shelf_4.png      C HIT   wall-mounted shelf                 ชั้นวางติดผนัง
+threat_10.png    A HIT   cactus                             กระบองเพชร
+threat_10.png    B HIT   potted cactus                      กระบองเพชรในกระถาง
+threat_10.png    C HIT   cactus                             กระบองเพชร
+tree_dead_69.png A miss  small object                       ของเล็ก
+tree_dead_69.png B HIT   tree                               ต้นไม้
+tree_dead_69.png C HIT   tree                               ต้นไม้
+tree_fruiting_94.png A miss  small object                       ของเล็ก
+tree_fruiting_94.png B HIT   tree                               ต้นไม้
+tree_fruiting_94.png C HIT   tree                               ต้นไม้
+tree_grown_150.png A miss  small object                       วัตถุขนาดเล็ก
+tree_grown_150.png B HIT   tree                               ต้นไม้
+tree_grown_150.png C HIT   tree                               ต้นไม้
+tree_old_81.png  A miss  small decorative object            ของตกแต่งชิ้นเล็ก
+tree_old_81.png  B HIT   tree                               ต้นไม้
+tree_old_81.png  C HIT   tree                               ต้นไม้
+
+model glimmer:muse-glimmer-30b-q5, thumb pictures: A watched only 1/9 · B picture only 8/9 · C both 9/9

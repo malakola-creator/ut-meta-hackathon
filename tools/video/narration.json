@@ -1,0 +1,55 @@
+{
+  "_note": "The voice-over, one entry per shot of the storyboard (ut-meta-video/storyboard/storyboard.html). tools/video/tts.py reads it; a person's own recording replaces any line by dropping a file of the same name into ut-meta-video/voice/.",
+  "voice": "en-US-AndrewNeural",
+  "rate": "-4%",
+  "lines": [
+    {
+      "id": "D1",
+      "start": 0.0,
+      "slot": 12,
+      "text": "ultimateTruth: a virtual environment and a thinking system. The Meta layer, for the Meta Global AI Developer Hackathon: a model's guess must be proven before the body believes it."
+    },
+    {
+      "id": "D2",
+      "start": 12.0,
+      "slot": 30,
+      "text": "A robot that takes a model's word for things will hurt someone, or eat the wrong thing. Every wrong name in our log passed the form check. A check is not enough: the body has to see for itself. Here is the platform it plugs into. Senses feed a mesh chip that runs the cognitive model bit for bit. A deep brain beside it holds a world model: it rehearses on a copy of the world, and writes new rows. The Meta layer may only propose, through hooks. It never commands."
+    },
+    {
+      "id": "D3",
+      "start": 42.0,
+      "slot": 26,
+      "text": "It reads a page and says what each thing does: a cat moves by itself and is not food; fruit is food. It also called rotten fruit food. The gate passed the form; the body's own meals decide. Naming the vacuum, it says why: moves by itself, came closer, not food, round and flat with a light. That understanding, not a word, goes to the Mind Bridge."
+    },
+    {
+      "id": "D4",
+      "start": 68.0,
+      "slot": 31,
+      "text": "What a model can name depends on what the eye gives it. The robot's own eye draws primitives: one of seven. The realistic house at full size: eight of nine, for Glimmer on the robot and Spark on the API alike. The same pictures shrunk to the eye's thumbnail: lost again. Watching alone, with no picture, names nothing. The finding is about the eye, not the model: give it a real, large picture, and it names what it sees. What it misses is what we drew badly."
+    },
+    {
+      "id": "D5",
+      "start": 99.0,
+      "slot": 19,
+      "text": "It learns like a child: it watches first, and believes later. I point at the vacuum and say its name; the model pulls the name out, the gate checks it, and the mind pins it to what it saw the thing do. Point at something it has not watched yet, and it refuses: not yet."
+    },
+    {
+      "id": "D6",
+      "start": 118.0,
+      "slot": 21,
+      "text": "A model may also propose how to act: turn toward the open side. A step with a hole in it is refused at the gate. One that passes is only a candidate. Rehearsed against the mind's own ways, this one moved nothing: its exits were met at once. The rehearsal catches what the form check cannot."
+    },
+    {
+      "id": "D7",
+      "start": 139.0,
+      "slot": 21,
+      "text": "Every proposal leaves a receipt. Eighteen so far: fifteen passed, three refused, each with its reason. A wrong name can pass the form check; nine did, and none reached the mind: the body must watch, or a person must teach. And a judge can run all of it with nothing but the repo."
+    },
+    {
+      "id": "D8",
+      "start": 160.0,
+      "slot": 20,
+      "text": "For the Meta Global AI Developer Hackathon: Meta's models see a thing and say what it is and what it does. Every understanding goes to the Mind Bridge as a proposal. The gate checks the form; the body or a person confirms. A model may propose. This mind decides."
+    }
+  ]
+}

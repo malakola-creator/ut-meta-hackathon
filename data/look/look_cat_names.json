@@ -1,0 +1,68 @@
+{
+ "cell": "kind|neutral|moves=1|food=0|read=0",
+ "label_en": "a thing that moves by itself, comes closer, bumping into it hurts the body (painful bodily feeling), not food",
+ "meaning": {
+  "moves_self": true,
+  "came_closer": true,
+  "touched": true,
+  "food": false
+ },
+ "runs": [
+  {
+   "model": "glimmer:muse-glimmer-30b-q5",
+   "seconds": 23.8,
+   "answer": {
+    "name_en": "cat",
+    "name_th": "แมว",
+    "used": [
+     "moves_by_itself",
+     "came_closer",
+     "hurt_when_touched",
+     "is_food",
+     "changes_look",
+     "size_m",
+     "times_met",
+     "picture"
+    ],
+    "why": "The picture shows a white animal with dark points on ears, tail and legs, body size about 0.5 m, consistent with a cat. Observations indicate it moves by itself, came closer, is not food, changes look, and hurts when touched, matching a living cat encountered many times."
+   },
+   "problems": [],
+   "observations": {
+    "picture": true,
+    "moves_by_itself": true,
+    "came_closer": true,
+    "hurt_when_touched": true,
+    "is_food": false,
+    "changes_look": true,
+    "size_m": 0.5,
+    "times_met": 350
+   }
+  },
+  {
+   "model": "meta:muse-spark-1.3",
+   "seconds": 8.8,
+   "answer": {
+    "name_en": "cat",
+    "name_th": "แมว",
+    "used": [
+     "picture",
+     "moves_by_itself",
+     "size_m",
+     "is_food"
+    ],
+    "why": "Picture shows a white four-legged animal with tail and cat shape, moves by itself, about 0.5m size, not food, matches a cat."
+   },
+   "problems": [],
+   "observations": {
+    "picture": true,
+    "moves_by_itself": true,
+    "came_closer": true,
+    "hurt_when_touched": true,
+    "is_food": false,
+    "changes_look": true,
+    "size_m": 0.5,
+    "times_met": 350
+   }
+  }
+ ]
+}

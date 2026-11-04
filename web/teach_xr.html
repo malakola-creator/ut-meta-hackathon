@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Point and say VR</title>
+<style>
+  :root { --bg: #f6f5f1; --fg: #1d1d1b; --muted: #6b6a66; --card: #ffffff; --line: #d9d6cf; --accent: #2f6fdf; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #161615; --fg: #ecebe6; --muted: #a09e97; --card: #20201e; --line: #3a3935; --accent: #6b9cff; } }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font: 15px/1.5 system-ui, "Noto Sans Thai", sans-serif; overflow: hidden; }
+  #ui { position: absolute; top: 12px; left: 12px; right: 12px; max-width: 560px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px; z-index: 2; }
+  #ui p { margin: 4px 0; }
+  button { font: inherit; padding: 9px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--accent); color: #fff; cursor: pointer; }
+  .muted { color: var(--muted); }
+</style>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+               "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+</script>
+</head>
+<body>
+<div id="ui">
+  <p><b>ชี้แล้วพูด (VR) / Point and say (VR)</b></p>
+  <p class="muted">1) กด “เปิดไมค์” ก่อน (ในโหมด VR ถามสิทธิ์ไม่ได้) 2) กด ENTER VR 3) ชี้ของแล้วกดไก = เลือก · ชี้พื้นแล้วกดไก = วาร์ป · กดด้ามจับค้าง = พูดชื่อ ปล่อย = ส่ง ·
+    Allow the mic first; in VR: trigger on a thing = pick, trigger on the floor = teleport, hold grip = speak the name, release = send.</p>
+  <p><button id="mic">🎤 เปิดไมค์ / Allow microphone</button> <span id="micstate" class="muted"></span></p>
+</div>
+<script type="module">
+import * as THREE from "three";
+import { VRButton } from "three/addons/webxr/VRButton.js";
+import { XRControllerModelFactory } from "three/addons/webxr/XRControllerModelFactory.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+
+const Q = new URLSearchParams(location.search);
+const AGENT = Q.get("agent") || "vhum";
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.xr.enabled = true;
+renderer.shadowMap.enabled = Q.get("shadows") === "1";                  // off by default: the Quest 2 keeps its frame rate
+document.body.appendChild(renderer.domElement);
+document.body.appendChild(VRButton.createButton(renderer));
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xb9d3ea);
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;   // soft light from all round
+scene.add(new THREE.HemisphereLight(0xeaf2ff, 0x8a7f6a, 0.9));
+const sun = new THREE.DirectionalLight(0xfff3df, 2.2); sun.position.set(6, 12, 4); sun.castShadow = renderer.shadowMap.enabled;
+sun.shadow.mapSize.set(1024, 1024); Object.assign(sun.shadow.camera, { left: -12, right: 12, top: 12, bottom: -12 }); scene.add(sun);
+
+const rig = new THREE.Group(); scene.add(rig);                         // the user: moved by teleport
+const camera = new THREE.PerspectiveCamera(70, innerWidth / innerHeight, 0.05, 120);
+camera.position.set(0, 1.6, 0); rig.add(camera);
+const orbit = new OrbitControls(camera, renderer.domElement);           // 2D: look around with the mouse
+orbit.target.set(0, 1.2, -2); orbit.update();
+
+const W = (x, y, h = 0) => new THREE.Vector3(x, h, -y);                // the world's (x, y) on the floor; three.js y is up
+const mat = (c, o = {}) => new THREE.MeshStandardMaterial(Object.assign({ color: c, roughness: 0.7 }, o));
+
+// ---------------------------------------------------------------- the platform's own assets (Poly Haven, CC0), as Blender draws them
+const texLoader = new THREE.TextureLoader(), gltf = new GLTFLoader();
+const texBase = new Map(), models = new Map();
+function maps(id) {
+  if (!texBase.has(id)) {
+    const f = (k) => { const t = texLoader.load("assets/" + id + "/" + id + "_" + k + "_1k.jpg"); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t; };
+    const d = f("diff"); d.colorSpace = THREE.SRGBColorSpace;
+    texBase.set(id, { map: d, normalMap: f("nor_gl"), roughnessMap: f("rough") });
+  }
+  return texBase.get(id);
+}
+function surface(key, u = 1, v = 1) {                                    // a material of the asset list's textures, tiled to the surface size
+  const t = (ASSET.textures || {})[key];
+  if (!t) return mat(0xdddddd);
+  const base = maps(t.id), tile = t.tile_m || 2, m = {};
+  for (const k in base) { const c = base[k].clone(); c.repeat.set(u / tile, v / tile); c.needsUpdate = true; m[k] = c; }
+  const out = new THREE.MeshStandardMaterial(Object.assign({ roughness: 1 }, m));
+  if (t.tint) out.color.setRGB(t.tint[0], t.tint[1], t.tint[2]);
+  return out;
+}
+function model(id) {
+  if (!models.has(id)) models.set(id, new Promise((ok, bad) => gltf.load("assets/" + id + "/" + id + "_1k.gltf", (g) => {
+    g.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; } });
+    g.scene.userData.box = new THREE.Box3().setFromObject(g.scene); ok(g.scene); }, undefined, bad)));
+  return models.get(id);
+}
+function place(lib, hx, hy, hz, x, y, face, fit = "footprint", floorZ = 0) {   // a model turned to face, fitted to a box (as Blender's _place)
+  const bb = lib.userData.box, d = new THREE.Vector3(); bb.getSize(d);
+  const turn = face - THREE.MathUtils.degToRad(ASSET.model_front_deg ?? -90);
+  const quarter = Math.abs(Math.round(turn / (Math.PI / 2))) % 2 === 1;
+  const [mx, my] = quarter ? [d.z, d.x] : [d.x, d.z];
+  let sx = 2 * hx / mx, sy = 2 * hy / my, sz = 2 * hz / d.y;
+  if (fit === "uniform") sx = sy = sz = Math.min(sx, sy, sz); else if (fit === "footprint") sz = Math.sqrt(sx * sy);
+  if (quarter) [sx, sy] = [sy, sx];
+  const inner = lib.clone(true);
+  inner.position.set(-(bb.min.x + bb.max.x) / 2, -bb.min.y, -(bb.min.z + bb.max.z) / 2);
+  const outer = new THREE.Group(); outer.add(inner);
+  outer.scale.set(sx, sz, sy); outer.rotation.y = turn; outer.position.copy(W(x, y, floorZ));
+  return outer;
+}
+
+let ASSET = {}, STATIC = {};
+const house = new THREE.Group(); scene.add(house);
+function roomRect(cx, cy, walls, half, band = 1.0) {                    // the nearest wall face each way (as Blender's _room_rect)
+  const near = (axis, sign) => {
+    let best = half * sign;
+    for (const [x0, x1, y0, y1] of walls) {
+      if (axis === "x" && y1 > cy - band && y0 < cy + band) { const f = sign > 0 ? x0 : x1; if ((f - cx) * sign > 0 && Math.abs(f - cx) < Math.abs(best - cx)) best = f; }
+      if (axis === "y" && x1 > cx - band && x0 < cx + band) { const f = sign > 0 ? y0 : y1; if ((f - cy) * sign > 0 && Math.abs(f - cy) < Math.abs(best - cy)) best = f; }
+    }
+    return best;
+  };
+  return [near("x", -1), near("x", 1), near("y", -1), near("y", 1)];
+}
+function plane(x0, x1, y0, y1, z, material) {
+  const g = new THREE.PlaneGeometry(x1 - x0, y1 - y0); g.rotateX(-Math.PI / 2);
+  const m = new THREE.Mesh(g, material); m.position.copy(W((x0 + x1) / 2, (y0 + y1) / 2, z)); m.receiveShadow = true; return m;
+}
+function box(hx, hy, hz, material, x, y, yaw, z0 = 0) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(2 * hx, 2 * hz, 2 * hy), material);
+  m.position.copy(W(x, y, z0 + hz)); m.rotation.y = yaw; m.castShadow = m.receiveShadow = true; return m;
+}
+function buildHouse(sc) {
+  const half = sc.arena_half || 10;
+  const walls = sc.boxes.filter(b => String(b.name).startsWith("wall") && b.corners).map(b => {
+    const xs = b.corners.map(c => c[0]), ys = b.corners.map(c => c[1]); return [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)]; });
+  house.add(plane(-half - 25, half + 25, -half - 25, half + 25, -0.004, surface(ASSET.outside || "grass", 2 * half + 50, 2 * half + 50)));
+  const floors = ASSET.room_floor || {};
+  for (const r of STATIC.rooms || []) {
+    const [x0, x1, y0, y1] = roomRect(r.x, r.y, walls, half);
+    house.add(plane(x0, x1, y0, y1, 0, surface(floors[r.key] || floors["*"] || "floor_wood", x1 - x0, y1 - y0)));
+  }
+  for (const b of sc.boxes) {
+    const [hx, hy, hz] = (b.size || [0.5, 0.5, 0.5]).map(Number), name = String(b.name), yaw = b.yaw || 0;
+    if (name.startsWith("wall")) { house.add(box(hx, hy, hz, surface("wall", 2 * Math.max(hx, hy), 2 * hz), b.x, b.y, yaw)); continue; }
+    furnish(name, hx, hy, hz, b.x, b.y, yaw);
+  }
+}
+function furnish(name, hx, hy, hz, x, y, yaw) {
+  const spec = (ASSET.boxes || {})[name] || {};
+  const face = THREE.MathUtils.degToRad(spec.face_deg || 0) + yaw;
+  const shape = spec.shape || ["fridge", "counter", "sink", "tub", "bed", "sofa", "chair", "table", "desk", "tv"].find(k => name.includes(k)) || "box";
+  const stand = shapeOf(shape, hx, hy, hz, x, y, yaw, face);
+  if (stand) house.add(stand);
+  if (!spec.model) return;
+  if (spec.mattress) {
+    house.add(box(hx * 0.92, hy * 0.9, 0.09, mat(0xebe6dc, { roughness: 0.95 }), x, y, yaw, 2 * hz - 0.11));
+  }
+  model(spec.model).then(lib => { house.add(place(lib, hx, hy, hz, x, y, face, spec.fit || "footprint")); if (stand) stand.visible = false; }).catch(() => {});
+}
+function shapeOf(shape, hx, hy, hz, x, y, yaw, face) {                  // where Poly Haven has no model (as Blender's hand-made shapes)
+  const g = new THREE.Group();
+  if (shape === "fridge") g.add(box(hx, hy, hz, mat(0xf3f3f1, { roughness: 0.25, metalness: 0.1 }), x, y, yaw));
+  else if (shape === "counter" || shape === "sink") { g.add(box(hx, hy, hz - 0.02, surface("cabinet_wood", 2 * hx, 2 * hz), x, y, yaw)); g.add(box(hx, hy, 0.02, surface("counter_top", 2 * hx, 2 * hy), x, y, yaw, 2 * hz - 0.04)); }
+  else if (shape === "tub") g.add(box(hx, hy, hz, mat(0xfbfbfb, { roughness: 0.15 }), x, y, yaw));
+  else if (shape === "tv") { g.add(box(hx, hy, 0.25, surface("cabinet_wood", 2 * hx, 0.5), x, y, yaw)); g.add(box(Math.min(hx, 0.04), hy * 0.95, Math.max(0.05, hz - 0.3), mat(0x101012, { roughness: 0.2 }), x, y, yaw, 0.5)); }
+  else g.add(box(hx, hy, hz, mat(0x9d8c76), x, y, yaw));
+  return g;
+}
+
+// ---------------------------------------------------------------- living things and the bodies
+const things = new THREE.Group(); scene.add(things);
+const byId = new Map();
+const TREE_H = { seedling: 0.5, grown: 2.4, flowering: 2.8, fruiting: 3.0, old: 3.0, dead: 1.8 };
+function tree(stage, seed) {                                            // light enough for the headset: a bark trunk and clusters of leaves
+  const g = new THREE.Group(), h = TREE_H[stage] || 2.4, rnd = (i) => (Math.sin(seed * 12.9898 + i * 78.233) * 43758.5453) % 1;
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.035 * h, 0.06 * h, h * 0.6, 10), mat(0x5b4430, { roughness: 0.95 }));
+  trunk.position.y = h * 0.3; trunk.castShadow = true; g.add(trunk);
+  if (stage !== "dead") {
+    const leaf = mat(stage === "old" ? 0x8a8f3a : stage === "flowering" ? 0x5aa04a : 0x3d8a3a, { roughness: 0.85, flatShading: true });
+    for (let i = 0; i < 7; i++) {
+      const r = h * (0.16 + 0.07 * Math.abs(rnd(i))), b = new THREE.Mesh(new THREE.IcosahedronGeometry(r, 1), leaf);
+      const a = i * 2.39, d = i ? h * 0.18 : 0;
+      b.position.set(Math.cos(a) * d, h * (0.62 + 0.12 * Math.abs(rnd(i + 9))), Math.sin(a) * d); b.castShadow = true; g.add(b);
+    }
+    if (stage === "flowering") for (let i = 0; i < 24; i++) {
+      const f = new THREE.Mesh(new THREE.SphereGeometry(0.035, 6, 4), mat(0xf6c6dc)); const a = i * 2.39, d = h * 0.3;
+      f.position.set(Math.cos(a) * d, h * (0.55 + 0.25 * Math.abs(rnd(i + 30))), Math.sin(a) * d); g.add(f);
+    }
+  }
+  return g;
+}
+const TINT = { young: [0.45, 0.9, 0.35], ripe: [1, 1, 1], rotten: [0.35, 0.22, 0.12], flower: [1, 0.8, 0.9] };
+function fruit(stage) {
+  const g = new THREE.Group();
+  model("food_apple_01").then(lib => {
+    const a = place(lib, 0.045, 0.045, 0.045, 0, 0, 0, "uniform");
+    const t = TINT[stage] || [1, 1, 1];
+    a.traverse(o => { if (o.isMesh) { o.material = o.material.clone(); o.material.color.setRGB(t[0], t[1], t[2]); if (stage === "rotten") o.material.roughness = 1; } });
+    a.position.y = -0.045; g.add(a);
+  }).catch(() => g.add(new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 8), mat(0xd2322a))));
+  return g;
+}
+function figure(kind) {                                                  // a body: head, torso, arms, legs (vhum dressed; mehum metal with a lit visor)
+  const g = new THREE.Group(), metal = kind === "mehum";
+  const skin = metal ? mat(0xb8bcc2, { metalness: 0.8, roughness: 0.3 }) : mat(0xd9a886, { roughness: 0.6 });
+  const top = metal ? skin : mat(0x3d6fb6), legs = metal ? skin : mat(0x2a2f3a), cap = (r, l, m, x, y, z, rx = 0) => {
+    const o = new THREE.Mesh(new THREE.CapsuleGeometry(r, l, 4, 10), m); o.position.set(x, y, z); o.rotation.x = rx; o.castShadow = true; g.add(o); };
+  cap(0.17, 0.42, top, 0, 1.12, 0);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 18, 14), skin); head.position.y = 1.58; g.add(head);
+  if (metal) { const v = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.035, 0.05), mat(0x7fd6ff, { emissive: 0x2fa8ff, emissiveIntensity: 2 })); v.position.set(0, 1.6, -0.1); g.add(v); }
+  for (const s of [-1, 1]) { cap(0.055, 0.5, top, s * 0.23, 1.08, 0); cap(0.075, 0.68, legs, s * 0.09, 0.42, 0); }
+  return g;
+}
+function cleaner() {
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.165, 0.08, 40), mat(0x18181b, { roughness: 0.25, metalness: 0.2 })); body.position.y = 0.04; g.add(body);
+  const top = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.004, 40), mat(0x6b6e73, { metalness: 0.6, roughness: 0.3 })); top.position.y = 0.082; g.add(top);
+  const lidar = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.03, 24), mat(0x222226)); lidar.position.set(0.06, 0.1, 0); g.add(lidar);
+  const led = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.005, 16), mat(0x22ff66, { emissive: 0x22ff66, emissiveIntensity: 2 })); led.position.set(-0.05, 0.086, 0); g.add(led);
+  return g;
+}
+function charger() {
+  const g = new THREE.Group();
+  const pad = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.02, 40), mat(0x2a2c30)); pad.position.y = 0.01; g.add(pad);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.25, 0.012, 8, 40), mat(0x2bff6a, { emissive: 0x19c450, emissiveIntensity: 1.5 })); ring.rotation.x = Math.PI / 2; ring.position.y = 0.022; g.add(ring);
+  const post = new THREE.Mesh(new THREE.BoxGeometry(0.14, 1.1, 0.22), mat(0xeef0f2, { roughness: 0.3 })); post.position.set(-0.42, 0.55, 0); g.add(post);
+  const scr = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.2), mat(0x1c4fa8, { emissive: 0x1c4fa8, emissiveIntensity: 1.2 })); scr.position.set(-0.349, 0.85, 0); scr.rotation.y = Math.PI / 2; g.add(scr);
+  return g;
+}
+function cactus() {
+  const g = new THREE.Group(), green = mat(0x2f7d32, { roughness: 0.6 });
+  const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.11, 0.2, 20), mat(0xb4552d, { roughness: 0.9 })); pot.position.y = 0.1; g.add(pot);
+  const stem = new THREE.Mesh(new THREE.CapsuleGeometry(0.07, 0.42, 4, 12), green); stem.position.y = 0.45; g.add(stem);
+  for (const s of [-1, 1]) { const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.035, 0.14, 4, 8), green); arm.position.set(0, 0.48 + 0.06 * s, s * 0.1); g.add(arm); }
+  return g;
+}
+function shelf() {
+  const g = new THREE.Group(), hx = 0.5, hy = 0.16, hz = 0.9;
+  const fallback = box(hx, hy, hz, surface("cabinet_wood", 1, 1.8), 0, 0, 0); g.add(fallback);
+  model("wooden_bookshelf_worn").then(lib => { g.add(place(lib, hx, hy, hz, 0, 0, Math.PI / 2, "stretch")); fallback.visible = false; }).catch(() => {});
+  const cols = [0x8c2a20, 0x1f4b80, 0x2d6a3a, 0x9a7020, 0x4a4a52];
+  let n = 0;
+  for (let lvl = 0; lvl < 3; lvl++) for (let x = -hx + 0.06; x < hx - 0.08; x += 0.05) {
+    const h = 0.2 + 0.08 * ((n * 0.61) % 1), bk = new THREE.Mesh(new THREE.BoxGeometry(0.035, h, hy * 1.2), mat(cols[n++ % 5]));
+    bk.position.set(x, 0.1 + lvl * 0.53 + h / 2, -hy * 0.3); g.add(bk);
+  }
+  return g;
+}
+function make(t) {
+  let g;
+  if (t.kind === "tree") g = tree(t.state, t.id);
+  else if (t.kind === "fruit") g = fruit(t.state);
+  else if (t.kind === "shelf") g = shelf();
+  else if (t.kind === "cleaner") g = cleaner();
+  else if (t.kind === "charger") g = charger();
+  else if (t.kind === "threat") g = cactus();
+  else if (t.kind === "agent") g = figure("mehum");
+  else { g = new THREE.Group(); g.add(new THREE.Mesh(new THREE.SphereGeometry(0.15, 12, 8), mat(0x999999))); }
+  g.userData = { sid: t.id, kind: t.kind, state: t.state };
+  things.add(g);
+  return g;
+}
+
+let built = false, placed = false, data = null;
+const start = new THREE.Vector3();
+renderer.xr.addEventListener("sessionstart", () => { rig.position.set(start.x, 0, start.z); camera.position.set(0, 1.6, 0); });
+async function refresh() {
+  data = await (await fetch("scene")).json();
+  if (!built) { STATIC = await (await fetch("static")).json(); ASSET = STATIC.assets || {}; buildHouse(data); built = true; }
+  const seen = new Set(), trees = new Map(data.things.filter(t => t.kind === "tree").map(t => [t.id, t]));
+  for (const t of data.things) {
+    seen.add(t.id);
+    let g = byId.get(t.id);
+    if (!g || g.userData.state !== t.state) { if (g) things.remove(g); g = make(t); byId.set(t.id, g); }
+    let p = W(t.x, t.y);
+    if (t.kind === "fruit") {                                              // hung on its tree's crown, facing out
+      const tr = trees.get(t.parent), h = tr ? (TREE_H[tr.state] || 2.4) : 0;
+      if (tr) { const d = new THREE.Vector2(t.x - tr.x, t.y - tr.y); if (d.length() < 1e-3) d.set(Math.cos(t.id * 2.4), Math.sin(t.id * 2.4)); d.normalize();
+        p = W(tr.x + d.x * h * 0.32, tr.y + d.y * h * 0.32, h * (0.55 + (t.id * 0.618 % 1) * 0.2)); } else p.y = 0.045;
+    }
+    g.position.copy(p);
+    g.rotation.y = t.yaw || 0;
+  }
+  for (const [id, g] of byId) if (!String(id).startsWith("body:") && !seen.has(id)) { things.remove(g); byId.delete(id); }
+  const me = data.bodies.find(b => b.key === AGENT);
+  let mine = byId.get("body:" + AGENT);
+  if (me) {
+    if (!mine) { mine = figure("vhum"); mine.userData = { sid: null }; things.add(mine); byId.set("body:" + AGENT, mine); }
+    mine.position.copy(W(me.x, me.y)); mine.rotation.y = (me.yaw || 0) - Math.PI / 2;
+    if (!placed && Q.get("cam")) {                                         // ?cam=x,y,z,tx,ty,tz: a fixed 2D view (checking a room)
+      const v = Q.get("cam").split(",").map(Number);
+      camera.position.copy(W(v[0], v[1], v[2])); orbit.target.copy(W(v[3], v[4], v[5])); orbit.update(); placed = true;
+    }
+    if (!placed) {                                                         // start beside vhum, looking at it
+      start.copy(W(me.x - 1.6 * Math.cos(me.yaw || 0), me.y - 1.6 * Math.sin(me.yaw || 0)));
+      camera.position.set(start.x, 1.6, start.z); orbit.target.set(mine.position.x, 1.0, mine.position.z); orbit.update();
+      placed = true;
+    }
+  }
+}
+
+// ---------------------------------------------------------------- what the mind still wonders about (H6): a question mark above it
+const qTex = (() => {
+  const c = document.createElement("canvas"); c.width = c.height = 128; const x = c.getContext("2d");
+  x.fillStyle = "#ffd447"; x.beginPath(); x.arc(64, 64, 58, 0, 7); x.fill();
+  x.fillStyle = "#3a2a00"; x.font = "bold 92px system-ui, sans-serif"; x.textAlign = "center"; x.textBaseline = "middle"; x.fillText("?", 64, 70);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+})();
+const MARK_H = { tree: 3.3, fruit: 0.2, agent: 2.0, shelf: 2.1 };
+async function refreshAsking() {
+  let r; try { r = await (await fetch("asking?agent=" + AGENT)).json(); } catch (e) { return; }
+  const want = new Set((r.asking || []).filter(a => a.open.some(q => q.what === "name" || q.what === "what")).map(a => a.sid));
+  for (const [id, g] of byId) {
+    if (String(id).startsWith("body:")) continue;
+    let m = g.userData.mark;
+    if (want.has(id)) {
+      if (!m) { m = new THREE.Sprite(new THREE.SpriteMaterial({ map: qTex, depthTest: false })); m.scale.set(0.28, 0.28, 1); g.add(m); g.userData.mark = m; }
+      m.position.y = MARK_H[g.userData.kind] ?? 0.8; m.visible = true;
+    } else if (m) m.visible = false;
+  }
+}
+setInterval(refreshAsking, 2000);
+
+// ---------------------------------------------------------------- the panel: what the mind knows of the picked thing, what happened
+const pc = document.createElement("canvas"); pc.width = 1024; pc.height = 560;
+const ptex = new THREE.CanvasTexture(pc);
+const panel = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 0.6), new THREE.MeshBasicMaterial({ map: ptex, transparent: true }));
+panel.visible = false; scene.add(panel);
+function say(lines) {
+  const c = pc.getContext("2d");
+  c.clearRect(0, 0, pc.width, pc.height);
+  c.fillStyle = "rgba(20,20,22,0.88)"; c.beginPath(); c.roundRect(0, 0, pc.width, pc.height, 28); c.fill();
+  let y = 60;
+  for (const [text, size, col] of lines) {
+    c.font = size + "px 'Noto Sans Thai', system-ui, sans-serif"; c.fillStyle = col || "#f2f2ee";
+    let line = "";
+    for (const word of String(text).split(" ")) {
+      if (c.measureText(line + word).width > pc.width - 70) { c.fillText(line, 36, y); y += size * 1.3; line = ""; }
+      line += word + " ";
+    }
+    c.fillText(line, 36, y); y += size * 1.45;
+  }
+  ptex.needsUpdate = true;
+  const cam = new THREE.Vector3(), dir = new THREE.Vector3();
+  camera.getWorldPosition(cam); camera.getWorldDirection(dir); dir.y = 0; dir.normalize();
+  panel.position.copy(cam).addScaledVector(dir, 1.3); panel.position.y = cam.y - 0.15;
+  panel.lookAt(cam.x, panel.position.y, cam.z); panel.visible = true;
+}
+
+// ---------------------------------------------------------------- picking, teleporting, speaking
+let picked = null, stream = null, rec = null, chunks = [];
+const ray = new THREE.Raycaster();
+function pickFrom(origin, dir) {
+  ray.set(origin, dir);
+  const hits = ray.intersectObjects([things, house], true);
+  for (const h of hits) {
+    let o = h.object;
+    while (o && !(o.userData && o.userData.sid !== undefined) && o !== house && o.parent) o = o.parent;
+    if (o && o.userData && o.userData.sid !== undefined && o.userData.sid !== null) return { thing: o };
+    if (h.point.y < 0.05) return { floor: h.point };                     // the floor or the lawn: teleport there
+    if (o === house || o === scene) return null;                         // a wall or furniture: nothing
+  }
+  return null;
+}
+async function choose(hit) {
+  if (!hit) return;
+  if (hit.floor) {
+    if (renderer.xr.isPresenting) rig.position.set(hit.floor.x, 0, hit.floor.z);
+    else { const d = new THREE.Vector3(hit.floor.x, 1.6, hit.floor.z).sub(camera.position); camera.position.add(d); orbit.target.add(d); orbit.update(); }
+    return;
+  }
+  picked = hit.thing.userData;
+  const info = await (await fetch("thing/" + picked.sid + "?agent=" + AGENT)).json();
+  if (!info.ok) { say([["id " + picked.sid + " (" + picked.kind + ")", 34, "#9cc0ff"], [AGENT + " ยังไม่เคยพบสิ่งนี้ในชีวิตนี้ / has not met it in this life", 32, "#ffb3a3"]]); return; }
+  const open = info.asking.filter(q => q.status === "open").map(q => q.th + " / " + q.en);
+  say([["id " + picked.sid + " (" + picked.kind + ")", 30, "#9cc0ff"],
+       [AGENT + " รู้จักเป็น / knows it as:", 30, "#c9c9c4"], [info.label_th + " · " + info.label_en, 36],
+       [info.thing.known ? (open.length ? "ยังถาม / still asking: " + open.join(" · ") : "ไม่มีคำถามค้าง / nothing left open") : "ยังถามว่าคืออะไร — ต้องเฝ้าดูก่อน / still asking what it is", 28, "#e8d38a"],
+       ["กดด้ามจับค้างแล้วพูดชื่อ / hold grip and say its name", 28, "#9fdcae"]]);
+}
+async function send(blob) {
+  if (!picked) return;
+  say([["กำลังฟังและคิด… / listening and thinking…", 34]]);
+  const f = new FormData(); f.append("audio", blob, "speech"); f.append("sid", picked.sid); f.append("agent", AGENT); f.append("token", new URLSearchParams(location.search).get("token") || "");
+  const out = await (await fetch("teach", { method: "POST", body: f })).json();
+  const lines = [["ได้ยิน / heard: “" + (out.said || "") + "”", 32]];
+  if (out.answer) lines.push([out.answer.named ? "ชื่อ / name: " + out.answer.name_th + " / " + out.answer.name_en : "ไม่ได้ตั้งชื่อ / no name given", 32]);
+  if (out.problems && out.problems.length) lines.push(["ด่านตรวจ / gate: " + out.problems.join("; "), 28, "#ffb3a3"]);
+  if (out.why) lines.push([out.why, 28, "#ffb3a3"]);
+  lines.push(out.ok ? ["✅ จิตรับชื่อแล้ว / the mind took the name", 34, "#9fdcae"] : ["❌ ยังไม่รับ / not taken", 34, "#ffb3a3"]);
+  say(lines);
+}
+function startTalk() {
+  if (!stream || !picked || (rec && rec.state === "recording")) return;
+  chunks = []; rec = new MediaRecorder(stream);
+  rec.ondataavailable = e => chunks.push(e.data);
+  rec.onstop = () => send(new Blob(chunks, { type: rec.mimeType }));
+  rec.start(); say([["🔴 กำลังฟัง… ปล่อยเมื่อพูดจบ / listening… release when done", 34]]);
+}
+function stopTalk() { if (rec && rec.state === "recording") rec.stop(); }
+
+const factory = new XRControllerModelFactory();
+for (let i = 0; i < 2; i++) {
+  const c = renderer.xr.getController(i);
+  const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0, 0, -8)]), new THREE.LineBasicMaterial({ color: 0x8fb4ff }));
+  c.add(line);
+  c.addEventListener("selectstart", () => {
+    const o = new THREE.Vector3(), q = new THREE.Quaternion();
+    c.getWorldPosition(o); c.getWorldQuaternion(q);
+    choose(pickFrom(o, new THREE.Vector3(0, 0, -1).applyQuaternion(q)));
+  });
+  c.addEventListener("squeezestart", startTalk);
+  c.addEventListener("squeezeend", stopTalk);
+  rig.add(c);
+  const grip = renderer.xr.getControllerGrip(i); grip.add(factory.createControllerModel(grip)); rig.add(grip);
+}
+renderer.domElement.addEventListener("click", (e) => {                   // 2D: click a thing with the mouse
+  const v = new THREE.Vector2(e.clientX / innerWidth * 2 - 1, -e.clientY / innerHeight * 2 + 1);
+  ray.setFromCamera(v, camera);
+  choose(pickFrom(ray.ray.origin, ray.ray.direction));
+});
+
+document.getElementById("mic").onclick = async () => {
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); document.getElementById("micstate").textContent = "✅ ไมค์พร้อม / mic ready"; }
+  catch (e) { document.getElementById("micstate").textContent = "❌ " + e.message; }
+};
+addEventListener("resize", () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+refresh(); setInterval(refresh, 1000);
+renderer.setAnimationLoop(() => renderer.render(scene, camera));
+</script>
+</body>
+</html>

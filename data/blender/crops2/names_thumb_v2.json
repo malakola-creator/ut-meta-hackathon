@@ -1,0 +1,238 @@
+{
+ "model": "glimmer:muse-glimmer-30b-q5",
+ "size": "thumb",
+ "score": {
+  "A": 1,
+  "B": 8,
+  "C": 9
+ },
+ "n": 9,
+ "rows": [
+  {
+   "file": "agent_0.png",
+   "truth": "another humanoid body (mehum)",
+   "A": {
+    "name_en": "small pet",
+    "name_th": "สัตว์เลี้ยงตัวเล็ก",
+    "hit": false,
+    "gate": true,
+    "s": 17.6
+   },
+   "B": {
+    "name_en": "sofa",
+    "name_th": "โซฟา",
+    "hit": false,
+    "gate": true,
+    "s": 13.2
+   },
+   "C": {
+    "name_en": "mannequin",
+    "name_th": "หุ่น",
+    "hit": true,
+    "gate": true,
+    "s": 19.4
+   }
+  },
+  {
+   "file": "charger_9.png",
+   "truth": "a charging station",
+   "A": {
+    "name_en": "stuffed toy",
+    "name_th": "ตุ๊กตาผ้า",
+    "hit": false,
+    "gate": true,
+    "s": 18.8
+   },
+   "B": {
+    "name_en": "charging pad",
+    "name_th": "แท่นชาร์จ",
+    "hit": true,
+    "gate": true,
+    "s": 14.3
+   },
+   "C": {
+    "name_en": "charging pad",
+    "name_th": "แท่นชาร์จ",
+    "hit": true,
+    "gate": true,
+    "s": 17.6
+   }
+  },
+  {
+   "file": "cleaner_5.png",
+   "truth": "a cleaning robot",
+   "A": {
+    "name_en": "small pet",
+    "name_th": "สัตว์เลี้ยงตัวเล็ก",
+    "hit": false,
+    "gate": true,
+    "s": 17.3
+   },
+   "B": {
+    "name_en": "robot vacuum cleaner",
+    "name_th": "หุ่นยนต์ดูดฝุ่น",
+    "hit": true,
+    "gate": true,
+    "s": 16.6
+   },
+   "C": {
+    "name_en": "robot vacuum",
+    "name_th": "หุ่นยนต์ดูดฝุ่น",
+    "hit": true,
+    "gate": true,
+    "s": 25.1
+   }
+  },
+  {
+   "file": "shelf_4.png",
+   "truth": "a bookshelf",
+   "A": {
+    "name_en": "small statue",
+    "name_th": "รูปปั้นเล็ก",
+    "hit": false,
+    "gate": true,
+    "s": 24.7
+   },
+   "B": {
+    "name_en": "bookshelf",
+    "name_th": "ชั้นหนังสือ",
+    "hit": true,
+    "gate": true,
+    "s": 17.7
+   },
+   "C": {
+    "name_en": "bookshelf",
+    "name_th": "ชั้นหนังสือ",
+    "hit": true,
+    "gate": true,
+    "s": 30.3
+   }
+  },
+  {
+   "file": "threat_10.png",
+   "truth": "a dangerous thing (the house's threat)",
+   "A": {
+    "name_en": "cactus",
+    "name_th": "กระบองเพชร",
+    "hit": true,
+    "gate": true,
+    "s": 13.2
+   },
+   "B": {
+    "name_en": "potted cactus",
+    "name_th": "กระบองเพชรในกระถาง",
+    "hit": true,
+    "gate": true,
+    "s": 14.5
+   },
+   "C": {
+    "name_en": "cactus",
+    "name_th": "กระบองเพชร",
+    "hit": true,
+    "gate": true,
+    "s": 20.2
+   }
+  },
+  {
+   "file": "tree_dead_69.png",
+   "truth": "a tree (dead)",
+   "A": {
+    "name_en": "small object",
+    "name_th": "ของเล็ก",
+    "hit": false,
+    "gate": true,
+    "s": 13.8
+   },
+   "B": {
+    "name_en": "tree",
+    "name_th": "ต้นไม้",
+    "hit": true,
+    "gate": true,
+    "s": 13.8
+   },
+   "C": {
+    "name_en": "tree",
+    "name_th": "ต้นไม้",
+    "hit": true,
+    "gate": true,
+    "s": 20.6
+   }
+  },
+  {
+   "file": "tree_fruiting_94.png",
+   "truth": "a tree (fruiting)",
+   "A": {
+    "name_en": "small object",
+    "name_th": "ของเล็ก",
+    "hit": false,
+    "gate": true,
+    "s": 13.4
+   },
+   "B": {
+    "name_en": "tree",
+    "name_th": "ต้นไม้",
+    "hit": true,
+    "gate": true,
+    "s": 13.2
+   },
+   "C": {
+    "name_en": "tree",
+    "name_th": "ต้นไม้",
+    "hit": true,
+    "gate": true,
+    "s": 28.2
+   }
+  },
+  {
+   "file": "tree_grown_150.png",
+   "truth": "a tree (grown)",
+   "A": {
+    "name_en": "small object",
+    "name_th": "วัตถุขนาดเล็ก",
+    "hit": false,
+    "gate": true,
+    "s": 16.3
+   },
+   "B": {
+    "name_en": "tree",
+    "name_th": "ต้นไม้",
+    "hit": true,
+    "gate": true,
+    "s": 24.9
+   },
+   "C": {
+    "name_en": "tree",
+    "name_th": "ต้นไม้",
+    "hit": true,
+    "gate": true,
+    "s": 29.7
+   }
+  },
+  {
+   "file": "tree_old_81.png",
+   "truth": "a tree (old)",
+   "A": {
+    "name_en": "small decorative object",
+    "name_th": "ของตกแต่งชิ้นเล็ก",
+    "hit": false,
+    "gate": true,
+    "s": 21.9
+   },
+   "B": {
+    "name_en": "tree",
+    "name_th": "ต้นไม้",
+    "hit": true,
+    "gate": true,
+    "s": 26.7
+   },
+   "C": {
+    "name_en": "tree",
+    "name_th": "ต้นไม้",
+    "hit": true,
+    "gate": true,
+    "s": 35.2
+   }
+  }
+ ],
+ "shelf_reshot": "5 Nov: the bookshelf photographed again from its front in daylight after the shelf model was fixed (books on the planks); the other eight pictures and answers are unchanged"
+}

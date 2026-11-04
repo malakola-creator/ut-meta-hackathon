@@ -1,0 +1,5 @@
+{
+  "_recorded": "from ultimateTruth's Protocol() on 4 Nov 2026 (enums primitive and exit_kind, in the chip's order)",
+  "primitives": ["hold", "turn_toward", "turn_away", "drive_toward", "drive_forward", "reverse", "turn_clear", "scan", "follow_gradient", "turn_by", "drive_dist"],
+  "exit_kinds": ["never", "bearing_below", "bearing_above", "dist_below", "time_ms", "visible", "front_clear", "flag", "fact_above", "front_blocked", "done", "act_no_way"]
+}
